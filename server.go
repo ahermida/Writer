@@ -3,25 +3,17 @@ package main
 import (
     "fmt"
     "net/http"
+    "strings"
+    "log"
+    "github.com/alberthermida/Writer/resourceGo/Routes"
 )
 
-type MyMux struct {
-}
-
-func (p *MyMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path == "/" {
-        sayhelloName(w, r)
-        return
-    }
-    http.NotFound(w, r)
-    return
-}
-
-func sayhelloName(w http.ResponseWriter, r     *http.Request) {
-    fmt.Fprintf(w, "Hello myroute!")
-}
-
 func main() {
-    mux := &MyMux{}
-    http.ListenAndServe(":9090", mux)
+    //handle routes
+    http.Handle("/api/", routes.ApiMux)
+    fmt.Printf("Server should be running on port:8080\n")
+    err := http.ListenAndServe(":8080", nil) // set listen port
+    if err != nil {
+        log.Fatal("ListenAndServe: ", err)
+    }
 }
