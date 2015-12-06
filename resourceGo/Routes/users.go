@@ -14,8 +14,8 @@ var UsersMux = http.NewServeMux()
 
 // Setup Routes with Mux
 func init() {
-  UsersMux.HandleFunc("/users/test", test)
-  UsersMux.HandleFunc("/users/other", other)
+  UsersMux.HandleFunc("/users/test", teststuff)
+  UsersMux.HandleFunc("/users/other", otherstuff)
 }
 
 /*
@@ -23,7 +23,7 @@ func init() {
 */
 
 // Handle /users/test
-func test(res http.ResponseWriter, req *http.Request) {
+func teststuff(res http.ResponseWriter, req *http.Request) {
   if req.Method != "GET" {
     http.Error(res, http.StatusText(405), 405)
     return
@@ -32,7 +32,7 @@ func test(res http.ResponseWriter, req *http.Request) {
 }
 
 // Handle /users/other
-func other(res http.ResponseWriter, req *http.Request) {
+func otherstuff(res http.ResponseWriter, req *http.Request) {
   if req.Method != "GET" {
     http.Error(res, http.StatusText(405), 405)
     return
