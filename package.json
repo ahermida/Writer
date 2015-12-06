@@ -11,7 +11,7 @@
     "url": "git+https://github.com/ahermida/Writer.git"
   },
   "author": "Albert Hermida",
-  "license": "ISC",
+  "license": "Apache License",
   "bugs": {
     "url": "https://github.com/ahermida/Writer/issues"
   },

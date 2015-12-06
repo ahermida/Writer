@@ -18,6 +18,9 @@ func init() {
   ApiMux.HandleFunc("/api/other", other)
 }
 
+/*
+   Route handlers for API Routes
+*/
 
 // Handle /api/test
 func test(res http.ResponseWriter, req *http.Request) {
@@ -28,7 +31,7 @@ func test(res http.ResponseWriter, req *http.Request) {
   fmt.Fprintf(res, "Test Passed!")
 }
 
-// Handle /api/test
+// Handle /api/other
 func other(res http.ResponseWriter, req *http.Request) {
   if req.Method != "GET" {
     http.Error(res, http.StatusText(405), 405)

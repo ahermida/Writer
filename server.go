@@ -9,8 +9,11 @@ import (
 
 func main() {
     //handle static files
-    http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
+    http.Handle("/", util.Log(http.FileServer(http.Dir("public"))))
+
+    //handle api routes
     http.Handle("/api/", util.Log(routes.ApiMux))
+    http.Handle("/users/", util.Log(routes.UsersMux))
 
     //Start Server
     log.Printf("Server should be running on port:8080\n")
