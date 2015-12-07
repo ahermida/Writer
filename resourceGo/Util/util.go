@@ -16,6 +16,6 @@ func Log(handler http.Handler) http.Handler {
     handler.ServeHTTP(res, req)
     end := time.Since(start)
     log.Printf("%s %s %s %s", req.Host, req.URL, req.Method, end)
-    
+
   })
 }

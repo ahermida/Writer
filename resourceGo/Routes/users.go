@@ -9,6 +9,7 @@ import (
     "net/http"
     //"crypto/aes"
     //"crypto/cipher"
+    "log"
     "database/sql"
     "encoding/json"
     "github.com/ahermida/Writer/resourceGo/DB"
@@ -69,11 +70,11 @@ func login(res http.ResponseWriter, req *http.Request) {
   if err != nil {
     if err == sql.ErrNoRows {
       //handle no rows error
-      w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-      w.WriteHeader(http.StatusOK)
-      loginFail := &LoginFail{Success: false, Message:"Username or password is incorrect"}
-      if err := json.NewEncoder(w).Encode(loginFail); err != nil {
-        log.Printf(err) //error with JSON encoding
+      res.Header().Set("Content-Type", "application/json; charset=UTF-8")
+      res.WriteHeader(http.StatusOK)
+      loginF := &loginFail{Success: false, Message:"Username or password is incorrect"}
+      if err := json.NewEncoder(res).Encode(loginF); err != nil {
+        log.Fatal(err) //error with JSON encoding
       }
     } else {
       //handle fail
