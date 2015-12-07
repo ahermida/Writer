@@ -53,5 +53,10 @@ func login(res http.ResponseWriter, req *http.Request) {
     http.Error(res, http.StatusText(405), 405)
     return
   }
+  var usr userLogin // new userLogin struct to be populated by POST
+  //request body should look like userLogin struct in helper.go -- Handle POST
+  decoder := json.NewDecoder(req.Body)
+  decoder.Decode(&usr) //populate struct
+  
   fmt.Fprintf(res, "Other Test Passed!")
 }

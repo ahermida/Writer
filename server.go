@@ -5,7 +5,7 @@ import (
   "log"
   "github.com/ahermida/Writer/resourceGo/Routes" //package with route mux(s)
   "github.com/ahermida/Writer/resourceGo/Util"   //package with utility funcs
-  //"github.com/ahermida/Writer/resourceGo/DB"     //package with DB connection
+  "github.com/ahermida/Writer/resourceGo/Config" //package with port
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 
   //Start Server
   log.Printf("Server should be running on port:8080\n")
-  err := http.ListenAndServe(":8080", nil) // set listen port
+  err := http.ListenAndServe(config.Port, nil) // set listen port
   if err != nil {
       log.Fatal("ListenAndServe: ", err)
   }
