@@ -72,8 +72,8 @@ func login(res http.ResponseWriter, req *http.Request) {
       w.Header().Set("Content-Type", "application/json; charset=UTF-8")
       w.WriteHeader(http.StatusOK)
       loginFail := &LoginFail{Success: false, Message:"Username or password is incorrect"}
-      if err := json.NewEncoder(w).Encode(); err != nil {
-        log.Printf(err)
+      if err := json.NewEncoder(w).Encode(loginFail); err != nil {
+        log.Printf(err) //error with JSON encoding
       }
     } else {
       //handle fail
