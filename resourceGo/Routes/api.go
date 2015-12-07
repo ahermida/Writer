@@ -7,6 +7,7 @@ package routes
 import (
     "fmt"
     "net/http"
+    "encoding/json"
 )
 
 // Routes with /api/ prefix

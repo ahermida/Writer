@@ -7,6 +7,9 @@ package routes
 import (
     "fmt"
     "net/http"
+    "crypto/aes"
+    "crypto/cipher"
+    "encoding/json"
 )
 
 // Routes with /users/ prefix
@@ -14,26 +17,39 @@ var UsersMux = http.NewServeMux()
 
 // Setup Routes with Mux
 func init() {
-  UsersMux.HandleFunc("/users/test", teststuff)
-  UsersMux.HandleFunc("/users/other", otherstuff)
+  //make user
+  UsersMux.HandleFunc("/users/make", make)
+  //get user info
+  UsersMux.HandleFunc("/users/info", info)
+  //login user
+  UsersMux.HandleFunc("/users/login", login)
 }
 
 /*
    Route handlers for User Routes
 */
 
-// Handle /users/test
-func teststuff(res http.ResponseWriter, req *http.Request) {
-  if req.Method != "GET" {
+// Handle /users/make
+func make(res http.ResponseWriter, req *http.Request) {
+  if req.Method != "POST" {
     http.Error(res, http.StatusText(405), 405)
     return
   }
   fmt.Fprintf(res, "Test Passed!")
 }
 
-// Handle /users/other
-func otherstuff(res http.ResponseWriter, req *http.Request) {
-  if req.Method != "GET" {
+// Handle /users/info
+func info(res http.ResponseWriter, req *http.Request) {
+  if req.Method != "POST" {
+    http.Error(res, http.StatusText(405), 405)
+    return
+  }
+  fmt.Fprintf(res, "Other Test Passed!")
+}
+
+// Handle /users/login
+func login(res http.ResponseWriter, req *http.Request) {
+  if req.Method != "POST" {
     http.Error(res, http.StatusText(405), 405)
     return
   }
