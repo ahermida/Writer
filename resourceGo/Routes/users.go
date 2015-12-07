@@ -7,9 +7,11 @@ package routes
 import (
     "fmt"
     "net/http"
-    "crypto/aes"
-    "crypto/cipher"
+    //"crypto/aes"
+    //"crypto/cipher"
+    "database/sql"
     "encoding/json"
+    "github.com/ahermida/Writer/resourceGo/DB"
 )
 
 // Routes with /users/ prefix
@@ -53,10 +55,34 @@ func login(res http.ResponseWriter, req *http.Request) {
     http.Error(res, http.StatusText(405), 405)
     return
   }
+  //POST request handling
   var usr userLogin // new userLogin struct to be populated by POST
-  //request body should look like userLogin struct in helper.go -- Handle POST
   decoder := json.NewDecoder(req.Body)
-  decoder.Decode(&usr) //populate struct
-  
-  fmt.Fprintf(res, "Other Test Passed!")
+  decoder.Decode(&usr) //populate struct usr
+  var pw string  //new string to be populated by Query
+  //check if user exists, get user, decode user password, check for match
+  err := db.Connection.QueryRow(`
+    SELECT password FROM users WHERE username=$1;
+  `, usr.Username).Scan(&pw) //scan password into pw
+
+  // Handle Query Result
+  if err != nil {
+    if err == sql.ErrNoRows {
+      //handle no rows error
+      w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+      w.WriteHeader(http.StatusOK)
+      loginFail := &LoginFail{Success: false, Message:"Username or password is incorrect"}
+      if err := json.NewEncoder(w).Encode(); err != nil {
+        log.Printf(err)
+      }
+    } else {
+      //handle fail
+      http.Error(res, http.StatusText(500), 500)
+      return
+    }
+  }
+  // Handle success --
+  // Decrypt password and compare, if fail send fail json. Else send JWT.
+
+
 }

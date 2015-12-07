@@ -16,3 +16,16 @@ type userLogin struct {
   Username string `json:"username"`
   Password string `json:"username"`
 }
+
+// struct for POST response to /users/login -- failed request
+type loginFail struct {
+  Success string `json:"success"`
+  Message string `json:"message"`
+}
+
+// struct for POST response to /users/login -- successful request
+type loginSuccess struct {
+  Success string `json:"success"`
+  Message string `json:"message"`
+  Token   string `json:"token"`
+}

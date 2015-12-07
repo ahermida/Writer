@@ -7,7 +7,8 @@ package routes
 import (
     "fmt"
     "net/http"
-    "encoding/json"
+    //"encoding/json"
+    //"github.com/ahermida/Writer/resourceGo/DB"
 )
 
 // Routes with /api/ prefix

@@ -23,7 +23,7 @@ func init() {
   if err = Connection.Ping(); err != nil {
     log.Panic(err)
   }
-  createModel()
+  createModel() //creates Tables if they don't currently exist
 }
 
 //Creates Tables in the public schema for now -- 12/6/2015
@@ -62,3 +62,4 @@ func createModel() {
       body text NOT NULL
     );
   `)
+}
