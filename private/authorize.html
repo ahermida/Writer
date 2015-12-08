@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Writer</title>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+    <!-- Purpose of this document is solely to retrieve token & redirect to '/' -->
+    <script>
+      localStorage.WriterKey = location.search.slice(7);
+      location = "http://localhost:8080";
+    </script>
+  </body>
+</html>

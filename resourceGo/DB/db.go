@@ -32,13 +32,14 @@ func createModel() {
   Connection.Exec(`
     CREATE TABLE IF NOT EXISTS users
     (
-      uid serial NOT NULL,
-      username text NOT NULL,
-      password text NOT NULL,
-      firstname text NOT NULL,
-      lastname text NOT NULL,
+      uid        serial     NOT NULL,
+      username   text       NOT NULL,
+      password   text       NOT NULL,
+      firstname  text       NOT NULL,
+      lastname   text       NOT NULL,
+      activated  boolean    NOT NULL,
       CONSTRAINT users_pkey PRIMARY KEY (uid),
-      UNIQUE (username)
+      UNIQUE     (username)
     )
     WITH (OIDS=FALSE);
   `)

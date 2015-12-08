@@ -39,5 +39,5 @@ func other(res http.ResponseWriter, req *http.Request) {
     http.Error(res, http.StatusText(405), 405)
     return
   }
-  fmt.Fprintf(res, "Other Test Passed!")
+  http.ServeFile(res, req, "private/authorize.html")
 }
