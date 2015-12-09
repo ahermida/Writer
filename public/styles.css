@@ -1,7 +1,122 @@
-#bgvideo{
+* {
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  height: 100%;
+  width: 100%;
+}
+#frontPage {
+  height: 100%;
+  width: 100%;
+}
+#bgVideoWrapper {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: -100;
+  top: 0;
+  left: 0;
+}
+#bgVideo {
+  position: absolute;
   min-height: 100%;
   min-width: 100%;
-  width: auto;
-  height: auto;
-  background:
+}
+
+#frontPageContent {
+  postition: absolute;
+  z-index: 100;
+  height: 100%;
+  width: 100%;
+  min-height: 100%;
+  min-width: 100%;
+  background-color: rgba(0,0,0,0.7)
+}
+
+#navbar {
+  display: flex;
+  flex-flow: row;
+  height: 70px;
+  width: 100%;
+}
+#frontPageLogo {
+  font-weight: 400;
+  display: flex;
+  align-self: flex-start;
+  margin: auto 0;
+  margin-left: 30px;
+  text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
+  font-family: Calibri, sans-serif;
+  text-decoration: none;
+  color: blue;
+  font-size: 3em;
+  border-color: white;
+  border: 1px solid white;
+}
+#frontPageLogoRight {
+  font-weight: 300;
+  display: flex;
+  align-self: flex-start;
+  margin: auto 0px;
+  font-family: Calibri, sans-serif;
+  text-decoration: none;
+  color: #fff;
+  font-size: 3em;
+}
+#navbar-right{
+  margin: auto;
+  margin-right: 5%;
+  display: inline-flex;
+  align-self: flex-end;
+}
+#login, #about, #team {
+  font-weight: 300;
+  margin: 0 10px;
+  font-family: Calibri, sans-serif;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.5em;
+}
+#formInputWrapper {
+  align-items: center;
+  height: 400px;
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+}
+#formInputWrapperInner {
+  margin-top: 30px;
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 400px;
+
+}
+#inputLabel {
+  align-self: flex-start;
+  margin: 50px auto;
+  font-family: Calibri, sans-serif;
+  text-decoration: none;
+  color: #aaa;
+  font-size: 3em;
+  font-weight: 300;
+}
+#formGuide {
+  font-family: Calibri, sans-serif;
+  color: #fff;
+
+}
+#formInput  {
+  align-self:center;
+  background-color: #fff;
+  font-family: Calibri, sans-serif;
+  text-decoration: none;
+  font-size: 1em;
+  height: 10%;
+  text-indent: 5px;
+  border: none;
+  max-width: 500px;
+  min-width: 300px;
+  width: 100%;
 }

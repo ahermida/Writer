@@ -25,9 +25,33 @@
     <title>Writer</title>
   </head>
   <body>
-    <script src="build.js"></script>
-    <video id="bgvideo" preload="auto" muted="muted" loop="loop" autoplay="true">
-      <source src="lombard.webm" type="video/webm">
-    </video>
+    <div id="frontPage">
+      <div id="bgVideoWrapper">
+        <video id="bgVideo" preload="auto" muted="muted" loop="loop" autoplay="true">
+          <source src="lombard.webm" type="video/webm">
+        </video>
+      </div>
+      <div id="frontPageContent">
+        <div id="navbar">
+          <a href="http://localhost:8080/" id="frontPageLogo">W</a>
+          <a href="http://localhost:8080/" id="frontPageLogoRight">riter</a>
+          <span id="navbar-right">
+            <span id="team">Team</span>
+            <span id="about">About</span>
+            <span id="login">Login</span>
+          </span>
+        </div>
+        <div id="frontPageCenter"> 
+          <div id="formInputWrapper">
+            <h3 id="inputLabel">Sign up, it's free.</h3>
+            <div id="formInputWrapperInner">
+              <p id="formGuide">Villanova Email:</p>
+              <input id="formInput" placeholder="writer@villanova.edu">
+            </div>
+          </div>
+        </div>
+      </div>
+      <script src="build.js"></script>
+    </div>
   </body>
 </html>
