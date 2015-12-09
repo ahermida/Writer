@@ -82,20 +82,18 @@ func sendEmail(email, link, name string) {
   var doc bytes.Buffer
 
   const emailTemplate = `From: {{.From}}
-    To: {{.To}}
-    Subject: {{.Subject}}
+Subject: {{.Subject}}
+To: {{.To}}
 
-    {{.Body}}
 
-    {{.Link}}
-
-    Sincerely,
-
-    {{.From}}
+{{.Body}}
+{{.Link}}
+Sincerely,
+{{.From}}
   `
 
   context := &SmtpTemplateData{
-       From: "Albert Hermida <ahermida95@gmail.com>",
+       From: "Albert Hermida",
          To: email,
     Subject: "Authorize your account for Writer",
        Body: "Hey, Thanks for signing up! Click on the link to authorize your account:",

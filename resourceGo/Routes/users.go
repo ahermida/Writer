@@ -229,7 +229,15 @@ func login(res http.ResponseWriter, req *http.Request) {
       return
     }
   }
-  // Handle success --
+  // Handle success -- but check for account not being activated
+  if !activated {
+    res.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    res.WriteHeader(http.StatusOK)
+    loginFail := &authFail{Success: false, Message:"Your account isn't activated yet, check for an activation email"}
+    if err := json.NewEncoder(res).Encode(loginFail); err != nil {
+      log.Fatal(err) //error encoding JSON, should fail
+    }
+  }
   // Encrypt password and compare, if fail send fail json. Else send JWT.
   key := []byte(config.Secret)
   hasher := hmac.New(sha256.New, key)
