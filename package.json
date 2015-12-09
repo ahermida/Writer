@@ -5,7 +5,7 @@
   "main": "public/client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t babelify Writer/entry.js -o public/build.js"
+    "build": "browserify -t babelify Writer/writer.js -o public/build.js"
   },
   "repository": {
     "type": "git",

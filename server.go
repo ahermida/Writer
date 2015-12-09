@@ -13,10 +13,10 @@ func main() {
   //handle static files
   http.Handle("/", util.Log(http.FileServer(http.Dir("public"))))
 
-  //handle api routes
-  http.Handle("/api/", util.Log(routes.ApiMux))
+  //handle api routes -- Protected
+  http.Handle("/api/", util.Log(util.Protect(routes.ApiMux)))
 
-  //handle user routes
+  //handle user routes -- Unprotected
   http.Handle("/users/", util.Log(routes.UsersMux))
 
   //Start Server
