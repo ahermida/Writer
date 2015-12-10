@@ -1,6 +1,6 @@
 import w from '../w';
 import views from '../Views/views';
-import store from '../Store/store';
+import store from '../Stores/store';
 import frontPageActions from '../Actions/frontPageActions'
 
 //just to keep track of all the listeners in the field. (make clean-up easier)
@@ -10,65 +10,97 @@ var frontPage = () => {
   frontPage.listeners = [];
 
   //add click event & keep track of about
-  w.addEvent('click', 'about', ()=>{
+  w.addEvent('click', 'about', (event) => {
     //on click of 'about, remove input, bring in about view
-    frontPageActions.activate('about');
-    w.remove(w.mFindId('frontPageCenter'));
-    w.insert(w.mFindId('frontPageContent'), w.html(views.about));
+    let frontPageContent = w.findId('frontPageContent');
+    let oldView = w.findId('frontPageCenter');
+    let aboutView = w.html(views.about)[1];
+    frontPageContent.replaceChild(aboutView, oldView);
   });
   frontPage.listeners.push('about');
 
   //add click event & keep track of team
-  w.addEvent('click', 'team', ()=>{
+  w.addEvent('click', 'team', (event) => {
     //on click of 'about, remove input, bring in about view'
-    frontPageActions.activate('team');
-    w.remove(w.mFindId('frontPageCenter'));
-    w.insert(w.mFindId('frontPageContent'), w.html(views.team));
+    let frontPageContent = w.findId('frontPageContent');
+    let oldView = w.findId('frontPageCenter');
+    let teamView = w.html(views.team)[1];
+    frontPageContent.replaceChild(teamView, oldView);
   });
   frontPage.listeners.push('team');
 
   //add click event & keep track of login view
-  w.addEvent('click', 'login', ()=>{
-    //on click of 'about, remove input, bring in about view'
-    frontPageActions.activate('login');
-    w.remove(w.mFindId('frontPageCenter'));
-    w.insert(w.mFindId('frontPageContent'), w.html(views.login));
+  w.addEvent('click', 'login', (event) => {
+    store.frontPage.targetItem = "username";
+    //on click of 'login' remove input, bring in about view
+    let frontPageContent = w.findId('frontPageContent');
+    let oldView = w.findId('frontPageCenter');
+    let loginView = w.html(views.login)[1];
+    frontPageContent.replaceChild(loginView, oldView);
+    let login = w.findId('login');
+    login.textContent = "Signup"
+    login.id = "signup";
   });
   frontPage.listeners.push('login');
 
-  w.addEvent('keyup', 'formInput', () => {
+  //on click of signup switch to signup
+  w.addEvent('click', 'signup', (event) => {
+    store.frontPage.targetItem = "username";
+    //on click of 'signup', remove input, bring in about view'
+    let frontPageContent = w.findId('frontPageContent');
+    let oldView = w.findId('frontPageCenter');
+    let signupView = w.html(views.signup)[1];
+    frontPageContent.replaceChild(signupView, oldView);
+    let login = w.findId('signup');
+    login.textContent = "Login";
+    login.id = "login";
+  });
+
+  //for login, no form validation
+  w.addEvent('keyup', 'formInputLogin', (event) => {
+    if (event.keyCode == 13) {
+      store.frontPage.login[store.frontPage.targetItem] = event.target.value;
+      frontPageActions.nextInputItemLogin();
+      event.target.value = '';
+    } else if (event.keyCode == 8 && !event.target.value.trim()) {
+      frontPageActions.previousInputItemLogin();
+    }
+  });
+
+  w.addEvent('keyup', 'formInput', (event) => {
     let tryForm = frontPageActions.parseItem(event.target.value.trim());
     //handle keypresses
     if (event.keyCode === 13) {
       let evaluation = frontPageActions.parseItem(event.target.value.trim());
       //fill out form & jump to next part
       if (evaluation.success) {
+        store.frontPage.signup[store.frontPage.targetItem] = event.target.value;
         frontPageActions.nextInputItem();
+        event.target.value = '';
       } else {
         frontPageActions.inputError(evaluation.message);
       }
-    } else if (event.keyCode === 8 && !event.target.value.trim()) {
+    } else if (!event.target.value.trim && event.keyCode === 8 ) {
       //jump to previous
       frontPageActions.previousInputItem();
     } else if (tryForm.success) {
-      w.mFindId('notification').className = "success";
+      w.findId('notification').className = "success";
     }
     if (!store.frontPage.inputNote) {
-      w.insert(w.mFindId('formInputWrapperInner'), w.html(`<div class="success" id="notification">Press Enter</div>`));
-      w.mFindId('notification').className = "";
+      w.insert(w.findId('formInputWrapperInner'), w.html(`<div class="fail" id="notification">Press Enter</div>`));
+      w.findId('notification').className = "fail";
       store.frontPage.inputNote = true;
     }
   });
   frontPage.listeners.push('formInput');
 
-  w.addEvent('click', 'notification', () => {
-    let item = w.mFindId('notification');
+  w.addEvent('click', 'notification', (event) => {
+    let item = w.findId('notification');
     if (item) {
       w.remove(item);
     }
   });
   frontPage.listeners.push('notification');
-
 };
 //insert frontPage into the view
 frontPage.initialize = () => {
@@ -103,14 +135,24 @@ frontPage.initialize = () => {
   `));
   frontPage();
 };
+
 //function to completely remove frontPage & its 'listeners'
 frontPage.remove = () => {
   //reset store, remove html, and remove events
-  frontPage.listeners = [];
   store.frontPage = {};
+  store.frontPage.login = {};
+  store.frontPage.signup = {};
+  store.frontPage.targetItem = "";
+  store.frontPage.inputNote = false;
   w.remove(w.findId('frontPage'));
+
+  frontPage.listeners = frontPage.listeners || [];
   frontPage.listeners.forEach((identifier) => {
     w.removeEvent(identifier);
   });
+  frontPage.listeners = [];
 };
+
+//export frontPage
+
 export default frontPage;

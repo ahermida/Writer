@@ -124,11 +124,11 @@ const eventDispatcher = {
    */
   callEvent: (event) => {
     if (eventDispatcher.eventRegistry[event.target.id] && eventDispatcher.eventRegistry[event.target.id].hasOwnProperty(event.type)) {
-      eventDispatcher.eventRegistry[event.target.id][event.type]();
+      eventDispatcher.eventRegistry[event.target.id][event.type](event);
     } else if (eventDispatcher.eventRegistry[event.target.className] && eventDispatcher.eventRegistry[event.target.className].hasOwnProperty(event.type)) {
-      eventDispatcher.eventRegistry[event.target.className][event.type]();
+      eventDispatcher.eventRegistry[event.target.className][event.type](event);
     } else if (eventDispatcher.eventRegistry[event.target]) {
-      eventDispatcher.eventRegistry[event.target][event.type]();
+      eventDispatcher.eventRegistry[event.target][event.type](event);
     }
   },
 
@@ -158,7 +158,7 @@ const eventDispatcher = {
  * @param {string} eventName Name of event one wants to add functionality for.
  * @param {function} callback Function that one wants to be called on event.
  */
-w.addEvent = (target, eventName, callback) => {
+w.addEvent = (eventName, target, callback) => {
   //addEvent & bind handler to it
   eventDispatcher.registerEvent(target, eventName, callback);
 };

@@ -35,15 +35,45 @@ html, body {
 }
 
 #navbar {
+  display: -webkit-flex;
   display: flex;
   flex-flow: row;
+  -webkit-flex-flow: row;
   height: 70px;
   width: 100%;
 }
-#frontPageLogo {
+#navbarMain {
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: row;
+  -webkit-flex-flow: row;
+  height: 70px;
+  width: 100%;
+}
+#frontPageLogoMain {
   font-weight: 400;
   display: flex;
+  display: -webkit-flex;
   align-self: flex-start;
+  -webkit-align-self: flex-start;
+  margin: auto 0;
+  margin-left: 30px;
+  font-family: Calibri, sans-serif;
+  text-decoration: none;
+  color: #ccc;
+  font-size: 3em;
+  border: 1px solid #ccc;
+}
+#frontPageLogoMain:hover {
+  color: #adadad;
+  border: 1px solid #adadad;
+}
+#frontPageLogo {
+  font-weight: 400;
+  display: -webkit-flex
+  display: flex;
+  align-self: flex-start;
+  -webkit-align-self: flex-start;
   margin: auto 0;
   margin-left: 30px;
   text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
@@ -57,7 +87,9 @@ html, body {
 #frontPageLogoRight {
   font-weight: 300;
   display: flex;
+  display: -webkit-flex;
   align-self: flex-start;
+  -webkit-align-self: flex-start;
   margin: auto 0px;
   font-family: Calibri, sans-serif;
   text-decoration: none;
@@ -68,34 +100,112 @@ html, body {
   margin: auto;
   margin-right: 5%;
   display: inline-flex;
+  display: -webkit-inline-flex;
+  -webkit-align-self: flex-end;
   align-self: flex-end;
 }
-#login, #about, #team {
+#login, #about, #team, #signup {
   font-weight: 300;
   margin: 0 10px;
   font-family: Calibri, sans-serif;
   text-decoration: none;
   color: #fff;
   font-size: 1.5em;
+  cursor: pointer;
 }
-#formInputWrapper {
+#navbarMain-right{
+  margin: auto;
+  margin-right: 5%;
+  display: inline-flex;
+  display: -webkit-inline-flex;
+  align-self: flex-end;
+  -webkit-align-self: flex-end;
+}
+#webLineWrapper {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+#firstName, #recent1, #recent2, #recent3 {
+  font-weight: 300;
+  margin: 0 10px;
+  font-family: Calibri, sans-serif;
+  text-decoration: none;
+  color: #aaa;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+#firstName:hover, #recent1:hover, #recent2:hover, #recent3:hover {
+  color: #adadad;
+}
+.content {
+  -webkit-align-items: center;
   align-items: center;
   height: 400px;
   display: flex;
+  color: white;
+  display: -webkit-flex;
   flex-flow: column;
+  -webkit-flex-flow: column;
+  width: 100%;
+}
+.contentPiece {
+  -webkit-align-items: center;
+  align-items: center;
+  height: 400px;
+  display: flex;
+  color: white;
+  display: -webkit-flex;
+  flex-flow: column;
+  -webkit-flex-flow: column;
+  width: 100%;
+}
+#login:hover, #about:hover, #team:hover, #signup:hover{
+  color: #aaa;
+}
+#formInputWrapper {
+  -webkit-align-items: center;
+  align-items: center;
+  height: 400px;
+  display: flex;
+  display: -webkit-flex;
+  flex-flow: column;
+  -webkit-flex-flow: column;
   width: 100%;
 }
 #formInputWrapperInner {
-  margin-top: 30px;
+  margin-top: 40px;
   display: flex;
   flex-flow: column;
+  display: -webkit-flex;
+  -webkit-flex-flow: column;
   height: 100%;
   width: 400px;
-
 }
+
+#nowthisisastory {
+  font-family: Palatino;
+  margin-top: 50px, auto;
+  color: #fff;
+}
+
+#notification{
+  font-family: sans-serif;
+  color: #aaa;
+  margin: 0 auto;
+}
+.success {
+  color: #fff !important;
+}
+.fail {
+  color: #aaa !important;
+}
+
 #inputLabel {
+  -webkit-align-self: flex-start;
   align-self: flex-start;
   margin: 50px auto;
+  margin-top: 70px;
   font-family: Calibri, sans-serif;
   text-decoration: none;
   color: #aaa;
@@ -107,16 +217,25 @@ html, body {
   color: #fff;
 
 }
-#formInput  {
+#formInput, #formInputLogin  {
+  -webkit-align-self: center;
   align-self:center;
   background-color: #fff;
   font-family: Calibri, sans-serif;
   text-decoration: none;
   font-size: 1em;
-  height: 10%;
+  height: 40px;
   text-indent: 5px;
   border: none;
   max-width: 500px;
   min-width: 300px;
   width: 100%;
+}
+
+.mainInput {
+  border-radius: 5px;
+  border: 1px solid #ccc !important;
+}
+.mainInput:hover{
+  border: 1px solid #aaa !important;
 }

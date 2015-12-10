@@ -6,7 +6,10 @@ import mainPage from './Components/mainPage';
   let authUser = localStorage.getItem('WriterKey');
   if (authUser) {
     //remove all items from current view and replace with mainPage
+    frontPage.remove();
+    mainPage.initialize();
   } else {
+    //initiate entry
     frontPage();
   }
-})()
+})();

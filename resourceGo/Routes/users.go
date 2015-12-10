@@ -237,6 +237,7 @@ func login(res http.ResponseWriter, req *http.Request) {
     if err := json.NewEncoder(res).Encode(loginFail); err != nil {
       log.Fatal(err) //error encoding JSON, should fail
     }
+    return
   }
   // Encrypt password and compare, if fail send fail json. Else send JWT.
   key := []byte(config.Secret)
