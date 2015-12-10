@@ -9,7 +9,7 @@ import mainPage from './Components/mainPage';
     frontPage.remove();
     mainPage.initialize();
   } else {
-    //initiate entry
+    //initialize entry
     frontPage();
   }
 })();
