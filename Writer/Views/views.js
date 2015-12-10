@@ -7,7 +7,14 @@ views.about = `
 <div id="frontPageCenter" class="content">
   <h1 class="contentPiece">About</h1>
   <div class="contentPiece">
-    <p>Albert Hermida</p>
+    <video height="200" width="300" id="hacker" preload="auto" loop="true" muted="true" autoplay="true">
+      <source src="hackers.webm" type="video/webm">
+    </video>
+    <p>
+    What we wanted to create with this was a place to go and utilize the capabilites of the web on a
+    constructive platform. We wanted to make a programmable environment on the web to see what cool things
+    we could make.
+    </p>
   </div>
 </div>
 `;
@@ -16,9 +23,9 @@ views.team  = `
   <h1 class="contentPiece">Team</h1>
   <div class="contentPiece">
     <img src="https://avatars1.githubusercontent.com/u/8062697?v=3&u=46e6d908dca2dd21b35f5848efad453f6db662c4&s=140">
-    <h3>Albert Hermida</h3>
-    <img src="https://scontent.xx.fbcdn.net/hphotos-xft1/v/t1.0-9/12226918_10205054282812538_5897883313255128850_n.jpg?oh=85258c5ec9f619de9d8a222c60bb173a&oe=56EAEA10">
-    <h3>Steve Butcher</h3>
+    <h3 class="name">Albert Hermida</h3>
+    <img src="https://avatars2.githubusercontent.com/u/15746937?v=3&s=400">
+    <h3 class="name">Steve Butcher</h3>
   </div>
 </div>
 
@@ -52,7 +59,7 @@ views.signup = `
 views.main=`<div id="mainPage">
   <div id="mainPageContent">
     <div id="navbarMain">
-      <a href="http://localhost:8080/" id="frontPageLogoMain">W</a>
+      <a href="http://${location.host}" id="frontPageLogoMain">W</a>
       <span id="navbarMain-right">
         <span class="recent" id="recent3"></span>
         <span class="recent" id="recent2"></span>

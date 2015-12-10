@@ -118,8 +118,8 @@ func make(res http.ResponseWriter, req *http.Request) {
 
       //create new URL
       tokenUrl := &url.URL{
-        Scheme : "http",
-        Host   : "localhost:8080",
+        Scheme : req.URL.Scheme,
+        Host   : req.URL.Host,
         Path   : "/users/activate",
       }
       //create query

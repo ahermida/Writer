@@ -158,7 +158,7 @@ frontPageActions.previousInputItemLogin = () => {
 }
 
 frontPageActions.login = () => {
-  w.post('http://localhost:8080/users/login')
+  w.post(`http://${location.host}/users/login`)
   .attach({
     username: store.frontPage.login.username,
     password: store.frontPage.login.password
@@ -191,7 +191,7 @@ frontPageActions.login = () => {
 };
 
 frontPageActions.signup = () => {
-  w.post('http://localhost:8080/users/make')
+  w.post(`http://${location.host}/users/make`)
   .attach({
     username: store.frontPage.signup.username,
     password: store.frontPage.signup.password,

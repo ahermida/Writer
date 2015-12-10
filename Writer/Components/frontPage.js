@@ -16,6 +16,7 @@ var frontPage = () => {
     let oldView = w.findId('frontPageCenter');
     let aboutView = w.html(views.about)[1];
     frontPageContent.replaceChild(aboutView, oldView);
+    document.getElementById("hacker").load();
   });
   frontPage.listeners.push('about');
 
@@ -62,9 +63,10 @@ var frontPage = () => {
       store.frontPage.login[store.frontPage.targetItem] = event.target.value;
       frontPageActions.nextInputItemLogin();
       event.target.value = '';
-    } else if (event.keyCode == 8 && !event.target.value.trim()) {
+    } else if (event.keyCode == 8 && !store.frontPage.inputVal) {
       frontPageActions.previousInputItemLogin();
     }
+    store.frontPage.inputVal = event.target.value;
   });
 
   w.addEvent('keyup', 'formInput', (event) => {
@@ -80,7 +82,7 @@ var frontPage = () => {
       } else {
         frontPageActions.inputError(evaluation.message);
       }
-    } else if (!event.target.value.trim && event.keyCode === 8 ) {
+    } else if (!store.frontPage.inputVal && event.keyCode === 8 ) {
       //jump to previous
       frontPageActions.previousInputItem();
     } else if (tryForm.success) {
@@ -91,6 +93,7 @@ var frontPage = () => {
       w.findId('notification').className = "fail";
       store.frontPage.inputNote = true;
     }
+    store.frontPage.inputVal = event.target.value;
   });
   frontPage.listeners.push('formInput');
 
@@ -113,8 +116,8 @@ frontPage.initialize = () => {
       </div>
       <div id="frontPageContent">
         <div id="navbar">
-          <a href="http://localhost:8080/" id="frontPageLogo">W</a>
-          <a href="http://localhost:8080/" id="frontPageLogoRight">riter</a>
+          <a href="http://${location.host}" id="frontPageLogo">W</a>
+          <a href="http://${location.host}" id="frontPageLogoRight">riter</a>
           <span id="navbar-right">
             <span id="team">Team</span>
             <span id="about">About</span>
@@ -142,6 +145,7 @@ frontPage.remove = () => {
   store.frontPage = {};
   store.frontPage.login = {};
   store.frontPage.signup = {};
+  store.frontPage.inputVal = "";
   store.frontPage.targetItem = "";
   store.frontPage.inputNote = false;
   w.remove(w.findId('frontPage'));

@@ -36,9 +36,9 @@ var mainPage = () => {
   });
   webLine.slash.add('logout', (text) => {
     window.localStorage.WriterKey = "";
-    location.href = 'http://localhost:8080';
+    location.href = `http://${location.host}`;
   }, true);
-  
+
   w.addEvent('keyup', 'formInput', function(event) {
     if (event.keyCode === 13) {
       webLine.in(event.target.value);
@@ -78,7 +78,7 @@ mainPage.remove = () => {
 };
 mainPage.initialize = () => {
   //check token
-  w.post('http://localhost:8080/api/user')
+  w.post(`http://${location.host}/api/user`)
   .header('WriterKey', localStorage.getItem('WriterKey'))
   .header('Access-Control-Allow-Headers', '*')
   .header('Content-Type', "application/json")
@@ -95,7 +95,7 @@ mainPage.initialize = () => {
       } else {
         //display res.message in notification
         localStorage.removeItem("WriterKey");
-        location = "http://localhost:8080";
+        location = `http://${location.host}`;
       }
     }
   });

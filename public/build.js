@@ -177,7 +177,7 @@ frontPageActions.previousInputItemLogin = function () {
 };
 
 frontPageActions.login = function () {
-  _w2.default.post('http://localhost:8080/users/login').attach({
+  _w2.default.post('http://' + location.host + '/users/login').attach({
     username: _store2.default.frontPage.login.username,
     password: _store2.default.frontPage.login.password
   }).header('Access-Control-Allow-Headers', '*').header('Content-Type', "application/json").end(function (err, res) {
@@ -206,7 +206,7 @@ frontPageActions.login = function () {
 };
 
 frontPageActions.signup = function () {
-  _w2.default.post('http://localhost:8080/users/make').attach({
+  _w2.default.post('http://' + location.host + '/users/make').attach({
     username: _store2.default.frontPage.signup.username,
     password: _store2.default.frontPage.signup.password,
     firstName: _store2.default.frontPage.signup.firstName,
@@ -244,7 +244,7 @@ exports.default = frontPageActions;
 },{"../Components/frontPage":2,"../Components/mainPage":3,"../Stores/store":4,"../w":7}],2:[function(require,module,exports){
 'use strict';
 
-var _templateObject = _taggedTemplateLiteral(['\n    <div id="frontPage">\n      <div id="bgVideoWrapper">\n        <video id="bgVideo" preload="auto" muted="muted" loop="loop" autoplay="true">\n          <source src="lombard.webm" type="video/webm">\n        </video>\n      </div>\n      <div id="frontPageContent">\n        <div id="navbar">\n          <a href="http://localhost:8080/" id="frontPageLogo">W</a>\n          <a href="http://localhost:8080/" id="frontPageLogoRight">riter</a>\n          <span id="navbar-right">\n            <span id="team">Team</span>\n            <span id="about">About</span>\n            <span id="login">Login</span>\n          </span>\n        </div>\n        <div id="frontPageCenter">\n          <div id="formInputWrapper">\n            <h3 id="inputLabel">Sign up, it\'s free.</h3>\n            <div id="formInputWrapperInner">\n              <p id="formGuide">Villanova Email:</p>\n              <input id="formInput" placeholder="writer@villanova.edu">\n            </div>\n          </div>\n        </div>\n      </div>\n     </div>\n  '], ['\n    <div id="frontPage">\n      <div id="bgVideoWrapper">\n        <video id="bgVideo" preload="auto" muted="muted" loop="loop" autoplay="true">\n          <source src="lombard.webm" type="video/webm">\n        </video>\n      </div>\n      <div id="frontPageContent">\n        <div id="navbar">\n          <a href="http://localhost:8080/" id="frontPageLogo">W</a>\n          <a href="http://localhost:8080/" id="frontPageLogoRight">riter</a>\n          <span id="navbar-right">\n            <span id="team">Team</span>\n            <span id="about">About</span>\n            <span id="login">Login</span>\n          </span>\n        </div>\n        <div id="frontPageCenter">\n          <div id="formInputWrapper">\n            <h3 id="inputLabel">Sign up, it\'s free.</h3>\n            <div id="formInputWrapperInner">\n              <p id="formGuide">Villanova Email:</p>\n              <input id="formInput" placeholder="writer@villanova.edu">\n            </div>\n          </div>\n        </div>\n      </div>\n     </div>\n  ']);
+var _templateObject = _taggedTemplateLiteral(['\n    <div id="frontPage">\n      <div id="bgVideoWrapper">\n        <video id="bgVideo" preload="auto" muted="muted" loop="loop" autoplay="true">\n          <source src="lombard.webm" type="video/webm">\n        </video>\n      </div>\n      <div id="frontPageContent">\n        <div id="navbar">\n          <a href="http://', '" id="frontPageLogo">W</a>\n          <a href="http://', '" id="frontPageLogoRight">riter</a>\n          <span id="navbar-right">\n            <span id="team">Team</span>\n            <span id="about">About</span>\n            <span id="login">Login</span>\n          </span>\n        </div>\n        <div id="frontPageCenter">\n          <div id="formInputWrapper">\n            <h3 id="inputLabel">Sign up, it\'s free.</h3>\n            <div id="formInputWrapperInner">\n              <p id="formGuide">Villanova Email:</p>\n              <input id="formInput" placeholder="writer@villanova.edu">\n            </div>\n          </div>\n        </div>\n      </div>\n     </div>\n  '], ['\n    <div id="frontPage">\n      <div id="bgVideoWrapper">\n        <video id="bgVideo" preload="auto" muted="muted" loop="loop" autoplay="true">\n          <source src="lombard.webm" type="video/webm">\n        </video>\n      </div>\n      <div id="frontPageContent">\n        <div id="navbar">\n          <a href="http://', '" id="frontPageLogo">W</a>\n          <a href="http://', '" id="frontPageLogoRight">riter</a>\n          <span id="navbar-right">\n            <span id="team">Team</span>\n            <span id="about">About</span>\n            <span id="login">Login</span>\n          </span>\n        </div>\n        <div id="frontPageCenter">\n          <div id="formInputWrapper">\n            <h3 id="inputLabel">Sign up, it\'s free.</h3>\n            <div id="formInputWrapperInner">\n              <p id="formGuide">Villanova Email:</p>\n              <input id="formInput" placeholder="writer@villanova.edu">\n            </div>\n          </div>\n        </div>\n      </div>\n     </div>\n  ']);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -283,6 +283,7 @@ var frontPage = function frontPage() {
     var oldView = _w2.default.findId('frontPageCenter');
     var aboutView = _w2.default.html(_views2.default.about)[1];
     frontPageContent.replaceChild(aboutView, oldView);
+    document.getElementById("hacker").load();
   });
   frontPage.listeners.push('about');
 
@@ -329,9 +330,10 @@ var frontPage = function frontPage() {
       _store2.default.frontPage.login[_store2.default.frontPage.targetItem] = event.target.value;
       _frontPageActions2.default.nextInputItemLogin();
       event.target.value = '';
-    } else if (event.keyCode == 8 && !event.target.value.trim()) {
+    } else if (event.keyCode == 8 && !_store2.default.frontPage.inputVal) {
       _frontPageActions2.default.previousInputItemLogin();
     }
+    _store2.default.frontPage.inputVal = event.target.value;
   });
 
   _w2.default.addEvent('keyup', 'formInput', function (event) {
@@ -347,7 +349,7 @@ var frontPage = function frontPage() {
       } else {
         _frontPageActions2.default.inputError(evaluation.message);
       }
-    } else if (!event.target.value.trim && event.keyCode === 8) {
+    } else if (!_store2.default.frontPage.inputVal && event.keyCode === 8) {
       //jump to previous
       _frontPageActions2.default.previousInputItem();
     } else if (tryForm.success) {
@@ -358,6 +360,7 @@ var frontPage = function frontPage() {
       _w2.default.findId('notification').className = "fail";
       _store2.default.frontPage.inputNote = true;
     }
+    _store2.default.frontPage.inputVal = event.target.value;
   });
   frontPage.listeners.push('formInput');
 
@@ -371,7 +374,7 @@ var frontPage = function frontPage() {
 };
 //insert frontPage into the view
 frontPage.initialize = function () {
-  _w2.default.insert(document.body, _w2.default.html(_w2.default.tmp(_templateObject)));
+  _w2.default.insert(document.body, _w2.default.html(_w2.default.tmp(_templateObject, location.host, location.host)));
   frontPage();
 };
 
@@ -381,6 +384,7 @@ frontPage.remove = function () {
   _store2.default.frontPage = {};
   _store2.default.frontPage.login = {};
   _store2.default.frontPage.signup = {};
+  _store2.default.frontPage.inputVal = "";
   _store2.default.frontPage.targetItem = "";
   _store2.default.frontPage.inputNote = false;
   _w2.default.remove(_w2.default.findId('frontPage'));
@@ -454,7 +458,7 @@ var mainPage = function mainPage() {
   });
   _webLine2.default.slash.add('logout', function (text) {
     window.localStorage.WriterKey = "";
-    location.href = 'http://localhost:8080';
+    location.href = 'http://' + location.host;
   }, true);
 
   _w2.default.addEvent('keyup', 'formInput', function (event) {
@@ -498,7 +502,7 @@ mainPage.remove = function () {
 };
 mainPage.initialize = function () {
   //check token
-  _w2.default.post('http://localhost:8080/api/user').header('WriterKey', localStorage.getItem('WriterKey')).header('Access-Control-Allow-Headers', '*').header('Content-Type', "application/json").end(function (err, res) {
+  _w2.default.post('http://' + location.host + '/api/user').header('WriterKey', localStorage.getItem('WriterKey')).header('Access-Control-Allow-Headers', '*').header('Content-Type', "application/json").end(function (err, res) {
     if (err) {
       console.log(err);
     } else {
@@ -511,7 +515,7 @@ mainPage.initialize = function () {
       } else {
           //display res.message in notification
           localStorage.removeItem("WriterKey");
-          location = "http://localhost:8080";
+          location = 'http://' + location.host;
         }
     }
   });
@@ -523,13 +527,13 @@ mainPage.initialize = function () {
 exports.default = mainPage;
 
 },{"../Stores/store":4,"../Views/views":5,"../w":7,"../webLine":8}],4:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _w = require('../w');
+var _w = require("../w");
 
 var _w2 = _interopRequireDefault(_w);
 
@@ -543,6 +547,7 @@ var store = {}; /**
 store.frontPage = {};
 store.frontPage.login = {};
 store.frontPage.signup = {};
+store.frontPage.inputVal = "";
 store.frontPage.targetItem = "username";
 store.frontPage.inputNote = false;
 //main
@@ -567,15 +572,15 @@ var views = {}; /**
                  * Vies for App
                  */
 
-views.about = '\n<div id="frontPageCenter" class="content">\n  <h1 class="contentPiece">About</h1>\n  <div class="contentPiece">\n    <p>Albert Hermida</p>\n  </div>\n</div>\n';
-views.team = '\n<div id="frontPageCenter" class="content">\n  <h1 class="contentPiece">Team</h1>\n  <div class="contentPiece">\n    <img src="https://avatars1.githubusercontent.com/u/8062697?v=3&u=46e6d908dca2dd21b35f5848efad453f6db662c4&s=140">\n    <h3>Albert Hermida</h3>\n    <img src="https://scontent.xx.fbcdn.net/hphotos-xft1/v/t1.0-9/12226918_10205054282812538_5897883313255128850_n.jpg?oh=85258c5ec9f619de9d8a222c60bb173a&oe=56EAEA10">\n    <h3>Steve Butcher</h3>\n  </div>\n</div>\n\n';
+views.about = '\n<div id="frontPageCenter" class="content">\n  <h1 class="contentPiece">About</h1>\n  <div class="contentPiece">\n    <video height="200" width="300" id="hacker" preload="auto" loop="true" muted="true" autoplay="true">\n      <source src="hackers.webm" type="video/webm">\n    </video>\n    <p>\n    What we wanted to create with this was a place to go and utilize the capabilites of the web on a\n    constructive platform. We wanted to make a programmable environment on the web to see what cool things\n    we could make.\n    </p>\n  </div>\n</div>\n';
+views.team = '\n<div id="frontPageCenter" class="content">\n  <h1 class="contentPiece">Team</h1>\n  <div class="contentPiece">\n    <img src="https://avatars1.githubusercontent.com/u/8062697?v=3&u=46e6d908dca2dd21b35f5848efad453f6db662c4&s=140">\n    <h3 class="name">Albert Hermida</h3>\n    <img src="https://avatars2.githubusercontent.com/u/15746937?v=3&s=400">\n    <h3 class="name">Steve Butcher</h3>\n  </div>\n</div>\n\n';
 //login view
 views.login = '\n<div id="frontPageCenter">\n  <div id="formInputWrapper">\n    <h3 id="inputLabel">Log in, it\'s still free.</h3>\n    <div id="formInputWrapperInner">\n      <p id="formGuide">Villanova Email:</p>\n      <input id="formInputLogin" placeholder="writer@villanova.edu">\n    </div>\n  </div>\n</div>\n';
 
 //signup view
 views.signup = '\n  <div id="frontPageCenter">\n    <div id="formInputWrapper">\n      <h3 id="inputLabel">Sign up, it\'s free.</h3>\n      <div id="formInputWrapperInner">\n        <p id="formGuide">Villanova Email:</p>\n        <input id="formInput" placeholder="writer@villanova.edu">\n      </div>\n    </div>\n  </div>\n';
 
-views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://localhost:8080/" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recent" id="recent3"></span>\n        <span class="recent" id="recent2"></span>\n        <span class="recent" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
+views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://' + location.host + '" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recent" id="recent3"></span>\n        <span class="recent" id="recent2"></span>\n        <span class="recent" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
 exports.default = views;
 
 },{"../w":7}],6:[function(require,module,exports){

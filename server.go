@@ -1,3 +1,4 @@
+/* Writer is a web app to help its creator manage stuff */
 package main
 
 import (
