@@ -4,9 +4,9 @@
 package db
 
 import (
+  _ "github.com/lib/pq"
   "github.com/ahermida/Writer/resourceGo/Config"
   "database/sql"
-  _ "github.com/lib/pq"
   "log"
 )
 
