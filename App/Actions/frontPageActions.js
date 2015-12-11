@@ -168,6 +168,7 @@ frontPageActions.login = () => {
   .end(function(err, res){
     if (err) {
       console.log(err);
+      return;
     } else {
       if (res.body.success) {
         //handle successful login, save token -> load main view
@@ -204,6 +205,7 @@ frontPageActions.signup = () => {
   .end(function(err, res){
     if (err) {
       console.log(err);
+      return;
     } else {
       if (res.body.success) {
         //handle successful login, save token -> load main view

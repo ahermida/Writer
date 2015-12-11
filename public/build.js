@@ -183,6 +183,7 @@ frontPageActions.login = function () {
   }).header('Access-Control-Allow-Headers', '*').header('Content-Type', "application/json").end(function (err, res) {
     if (err) {
       console.log(err);
+      return;
     } else {
       if (res.body.success) {
         //handle successful login, save token -> load main view
@@ -215,6 +216,7 @@ frontPageActions.signup = function () {
   }).header('Access-Control-Allow-Headers', '*').header('Content-Type', "application/json").end(function (err, res) {
     if (err) {
       console.log(err);
+      return;
     } else {
       if (res.body.success) {
         //handle successful login, save token -> load main view
@@ -608,7 +610,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     _frontPage2.default.remove();
     _mainPage2.default.initialize();
   } else {
-    //initiate entry
+    //initialize entry
     (0, _frontPage2.default)();
   }
 })();
