@@ -5,6 +5,7 @@
 *.yaml
 # Folders
 _obj
+_workspace
 _test
 *.webm
 # Architecture specific extensions/prefixes
@@ -26,4 +27,3 @@ _testmain.go
 .DS_Store
 server
 config.go
-
