@@ -11,6 +11,8 @@ var frontPage = () => {
 
   //add click event & keep track of about
   w.addEvent('click', 'about', (event) => {
+    store.frontPage.signup = {};
+    store.frontPage.login = {};
     //on click of 'about, remove input, bring in about view
     let frontPageContent = w.findId('frontPageContent');
     let oldView = w.findId('frontPageCenter');
@@ -22,6 +24,8 @@ var frontPage = () => {
 
   //add click event & keep track of team
   w.addEvent('click', 'team', (event) => {
+    store.frontPage.signup = {};
+    store.frontPage.login = {};
     //on click of 'about, remove input, bring in about view'
     let frontPageContent = w.findId('frontPageContent');
     let oldView = w.findId('frontPageCenter');
@@ -32,6 +36,7 @@ var frontPage = () => {
 
   //add click event & keep track of login view
   w.addEvent('click', 'login', (event) => {
+    store.frontPage.signup = {};
     store.frontPage.targetItem = "username";
     //on click of 'login' remove input, bring in about view
     let frontPageContent = w.findId('frontPageContent');
@@ -46,6 +51,10 @@ var frontPage = () => {
 
   //on click of signup switch to signup
   w.addEvent('click', 'signup', (event) => {
+    store.frontPage = {};
+    store.frontPage.login = {};
+    store.frontPage.signup = {};
+    store.frontPage.inputVal = "";
     store.frontPage.targetItem = "username";
     //on click of 'signup', remove input, bring in about view'
     let frontPageContent = w.findId('frontPageContent');
@@ -70,74 +79,51 @@ var frontPage = () => {
   });
 
   w.addEvent('keyup', 'formInput', (event) => {
+    //check if valid item for target
     let tryForm = frontPageActions.parseItem(event.target.value.trim());
-    //handle keypresses
+    //handle keypresses ENTER & BACKSPACE (when empty)
     if (event.keyCode === 13) {
-      let evaluation = frontPageActions.parseItem(event.target.value.trim());
       //fill out form & jump to next part
-      if (evaluation.success) {
+      if (tryForm.success) {
         store.frontPage.signup[store.frontPage.targetItem] = event.target.value;
         frontPageActions.nextInputItem();
         event.target.value = '';
       } else {
-        frontPageActions.inputError(evaluation.message);
+        //show error in white
+        frontPageActions.inputError(tryForm.message);
       }
-    } else if (!store.frontPage.inputVal && event.keyCode === 8 ) {
+    }
+    //Handle BACKSPACE
+    if (!store.frontPage.inputVal && event.keyCode === 8 ) {
       //jump to previous
       frontPageActions.previousInputItem();
-    } else if (tryForm.success) {
-      w.findId('notification').className = "success";
     }
-    if (!store.frontPage.inputNote) {
-      w.insert(w.findId('formInputWrapperInner'), w.html(`<div class="fail" id="notification">Press Enter</div>`));
-      w.findId('notification').className = "fail";
-      store.frontPage.inputNote = true;
+
+    //Handle Successful Form -- let the user know -- (passive)
+    var found = w.findId('notification');
+    if (tryForm.success) {
+      if (found) {
+        found.className = "success";
+      } else {
+        w.insert(w.findId('formInputWrapperInner'), w.html(`<div class="success" id="notification">Press Enter</div>`));
+      }
+    } else {
+      if (found) {
+        found.className = "fail";
+      } else {
+        w.insert(w.findId('formInputWrapperInner'), w.html(`<div class="fail" id="notification">Press Enter</div>`));
+      }
     }
     store.frontPage.inputVal = event.target.value;
   });
   frontPage.listeners.push('formInput');
+};
 
-  w.addEvent('click', 'notification', (event) => {
-    let item = w.findId('notification');
-    if (item) {
-      w.remove(item);
-    }
-  });
-  frontPage.listeners.push('notification');
-};
-//insert frontPage into the view
-frontPage.initialize = () => {
-  w.insert(document.body, w.html(w.tmp`
-    <div id="frontPage">
-      <div id="bgVideoWrapper">
-        <video id="bgVideo" preload="auto" muted="muted" loop="loop" autoplay="true">
-          <source src="lombard.webm" type="video/webm">
-        </video>
-      </div>
-      <div id="frontPageContent">
-        <div id="navbar">
-          <a href="http://${location.host}" id="frontPageLogo">W</a>
-          <a href="http://${location.host}" id="frontPageLogoRight">riter</a>
-          <span id="navbar-right">
-            <span id="team">Team</span>
-            <span id="about">About</span>
-            <span id="login">Login</span>
-          </span>
-        </div>
-        <div id="frontPageCenter">
-          <div id="formInputWrapper">
-            <h3 id="inputLabel">Sign up, it's free.</h3>
-            <div id="formInputWrapperInner">
-              <p id="formGuide">Villanova Email:</p>
-              <input id="formInput" placeholder="writer@villanova.edu">
-            </div>
-          </div>
-        </div>
-      </div>
-     </div>
-  `));
-  frontPage();
-};
+/**
+ * insert frontPage into the view -- not used, just for conformity
+ * frontPage should only be accessible by pageload to logged out users
+ */
+frontPage.initialize = () => {}
 
 //function to completely remove frontPage & its 'listeners'
 frontPage.remove = () => {
@@ -147,7 +133,6 @@ frontPage.remove = () => {
   store.frontPage.signup = {};
   store.frontPage.inputVal = "";
   store.frontPage.targetItem = "";
-  store.frontPage.inputNote = false;
   w.remove(w.findId('frontPage'));
 
   frontPage.listeners = frontPage.listeners || [];

@@ -13,7 +13,7 @@ views.about = `
     <p>
     What we wanted to create with this was a place to go and utilize the capabilites of the web on a
     constructive platform. We wanted to make a programmable environment on the web to see what cool things
-    we could make.
+    we could create thereafter.
     </p>
   </div>
 </div>

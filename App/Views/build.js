@@ -29,20 +29,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var frontPageActions = {};
 //goes to the next item on the list
-
-/**
- *  Trace Signup Input
- */
 frontPageActions.nextInputItem = function () {
   var formGuide = _w2.default.findId('formGuide');
   var form = _w2.default.findId('formInput');
   var note = _w2.default.findId('notification');
-
-  // set note if note doesn't exist
-  if (!note) {
-    note = _w2.default.html('<div class="fail" id="notification"></div>');
-    _w2.default.insert(_w2.default.findId('formInputWrapperInner'), note);
-  }
   switch (_store2.default.frontPage.targetItem) {
     case "username":
       _store2.default.frontPage.targetItem = "password";
@@ -104,10 +94,51 @@ frontPageActions.previousInputItem = function () {
   }
 };
 
-/**
- * Trace Login Form Input
- */
+//form validation
+frontPageActions.parseItem = function (input) {
+  var response = {};
+  switch (_store2.default.frontPage.targetItem) {
+    case "username":
+      response.success = validateEmail(input);
+      response.message = "Invalid email address. It must be a villanova.edu email";
+      break;
+    case "password":
+      response.success = validatePassword(input);
+      response.message = "Invalid password. It must contain 7+ characters and include letters and numbers";
+      break;
+    case "firstName":
+      response.success = validateName(input);
+      response.message = "Please input your real name";
+      break;
+    case "lastName":
+      response.success = validateName(input);
+      response.message = "Please input your real name";
+      break;
+  }
+  return response;
+};
 
+frontPageActions.inputError = function (message) {
+  //display message in notification
+  var found = _w2.default.findId('notification');
+  if (found) {
+    found.textContent = message;
+  } else {
+    _w2.default.insert(_w2.default.findId('formInputWrapperInner'), _w2.default.html('\n      <div class="success" id="notification">' + message + '</div>\n    '));
+  }
+};
+function validateEmail(email) {
+  var regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@villanova.edu/;
+  return regexp.test(email);
+}
+function validatePassword(input) {
+  var regexp = /(?=.*\d)(?=.*[a-zA-Z]).{7,}/;
+  return regexp.test(input);
+}
+function validateName(name) {
+  var regexp = /(?=[a-zA-Z]).{2,}/;
+  return regexp.test(name);
+}
 //goes to the previous item on the list
 frontPageActions.nextInputItemLogin = function () {
   var formGuide = _w2.default.findId('formGuide');
@@ -144,59 +175,6 @@ frontPageActions.previousInputItemLogin = function () {
   }
 };
 
-/**
- * Form Validation -- I could (should) have compiled the regex, but I figure it's not that big a problem
- */
-
-frontPageActions.parseItem = function (input) {
-  var response = {};
-  switch (_store2.default.frontPage.targetItem) {
-    case "username":
-      response.success = validateEmail(input);
-      response.message = "Invalid email address. It must be a villanova.edu email";
-      break;
-    case "password":
-      response.success = validatePassword(input);
-      response.message = "Invalid password. It must contain 7+ characters and include letters and numbers";
-      break;
-    case "firstName":
-      response.success = validateName(input);
-      response.message = "Please input your real name";
-      break;
-    case "lastName":
-      response.success = validateName(input);
-      response.message = "Please input your real name";
-      break;
-  }
-  return response;
-};
-
-frontPageActions.inputError = function (message) {
-  //display message in notification
-  var found = _w2.default.findId('notification');
-  if (found) {
-    found.textContent = message;
-  } else {
-    var inner = _w2.default.findId('formInputWrapperInner');
-    _w2.default.insert(inner, _w2.default.html('\n      <div class="success" id="notification">' + message + '</div>\n    '));
-  }
-};
-function validateEmail(email) {
-  var regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@villanova.edu/;
-  return regexp.test(email);
-}
-function validatePassword(input) {
-  var regexp = /(?=.*\d)(?=.*[a-zA-Z]).{7,}/;
-  return regexp.test(input);
-}
-function validateName(name) {
-  var regexp = /(?=[a-zA-Z]).{2,}/;
-  return regexp.test(name);
-}
-
-/**
- * AJAX Stuff Here On
- */
 frontPageActions.login = function () {
   _w2.default.post('http://' + location.host + '/users/login').attach({
     username: _store2.default.frontPage.login.username,
@@ -353,10 +331,7 @@ var frontPage = function frontPage() {
 
   //on click of signup switch to signup
   _w2.default.addEvent('click', 'signup', function (event) {
-    _store2.default.frontPage = {};
     _store2.default.frontPage.login = {};
-    _store2.default.frontPage.signup = {};
-    _store2.default.frontPage.inputVal = "";
     _store2.default.frontPage.targetItem = "username";
     //on click of 'signup', remove input, bring in about view'
     var frontPageContent = _w2.default.findId('frontPageContent');
@@ -476,18 +451,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //init
 var mainPage = function mainPage() {
   window.webLine = _webLine2.default; //expose webLine
-  var addLocation = function addLocation(loc) {
-    addLocation[addLocation.loc % 3] = loc;
-    _w2.default.findId('recent' + (addLocation.loc % 3 + 1)).textContent = loc;
-    addLocation.loc++;
-  };
-  addLocation.loc = 0;
-  addLocation.locs = [];
   mainPage.listeners = [];
   _webLine2.default.slash.add('js', function (text) {
     var response = undefined;
-    _store2.default.mainPage.jsStash = _store2.default.mainPage.jsStash || [];
-    _store2.default.mainPage.jsStash.push(text);
     try {
       response = eval.call(window, text);
     } catch (e) {
@@ -534,27 +500,15 @@ var mainPage = function mainPage() {
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      var home = _w2.default.html('<h3 id="inputLabel">Welcome.</h3>');
-      _w2.default.insert(parent, home);
+      _w2.default.insert(parent, _w2.default.html('<h3 id="inputLabel">Welcome.</h3>'));
     }
   });
-
-  _webLine2.default.slash.add('clear', function () {
-    //clear space first
-    parent = _w2.default.findId('webLine');
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
-    }
-    //remove all contents of it
-  }, true);
-
   _webLine2.default.slash.add('location', function () {
     return _webLine2.default.out(_webLine2.default.loc);
   }, true);
 
   mainPage.listeners.push('formInput');
   _webLine2.default.register(function (location) {
-    addLocation(location);
     //clear space first
     parent = _w2.default.findId('webLineWrapper');
     while (parent.firstChild) {

@@ -1,10 +1,11 @@
 /*
-   PostgreSQL Database for Application
+   MySQL Database for Application
 */
 package db
 
 import (
-  _ "github.com/lib/pq"
+  _ "google.golang.org/appengine/cloudsql"
+  _ "github.com/go-sql-driver/mysql"
   "github.com/ahermida/Writer/resourceGo/Config"
   "database/sql"
   "log"
@@ -15,52 +16,37 @@ var Connection *sql.DB
 //initialize DB
 func init() {
   var err error
-  Connection, err = sql.Open("postgres", config.DB)
+  Connection, err = sql.Open("mysql", config.DB)
   if err != nil {
     log.Panic(err)
   }
 
   if err = Connection.Ping(); err != nil {
-    log.Panic(err)
+    log.Fatal(err)
   }
-  createModel() //creates Tables if they don't currently exist
+  createModel()
 }
 
-//Creates Tables in the public schema for now -- 12/6/2015
+//Creates Tables in the public DB for now -- 12/6/2015
 func createModel() {
-  //create users table if it doesn't exist
-  Connection.Exec(`
-    CREATE TABLE IF NOT EXISTS users
-    (
-      uid        serial     NOT NULL,
-      username   text       NOT NULL,
-      password   text       NOT NULL,
-      firstname  text       NOT NULL,
-      lastname   text       NOT NULL,
-      activated  boolean    NOT NULL,
-      CONSTRAINT users_pkey PRIMARY KEY (uid),
-      UNIQUE     (username)
-    )
-    WITH (OIDS=FALSE);
-  `)
 
-  //create table of notes for notes app
-  Connection.Exec(`
-    CREATE TABLE IF NOT EXISTS notes
+  /*                   DB RESET
+  _, er1 := Connection.Exec(`drop table if exists users;`)
+  if er1 != nil {
+    log.Println(er1)
+  }
+  */
+  _, err := Connection.Exec(`
+    create table IF NOT EXISTS users
     (
-      Created date,
-      username character varying(100) NOT NULL,
-      body text NOT NULL
-    );
-  `)
-
-  //create
-  Connection.Exec(`
-    CREATE TABLE IF NOT EXISTS sps
-    (
-      Created date,
-      username character varying(100) NOT NULL,
-      body text NOT NULL
-    );
-  `)
+          uid        serial     NOT NULL,
+          username   text       NOT NULL,
+          password   text       NOT NULL,
+          firstname  text       NOT NULL,
+          lastname   text       NOT NULL,
+          activated  boolean    NOT NULL
+    );`)
+  if err != nil {
+    log.Fatal(err)
+  }
 }

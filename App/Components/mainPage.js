@@ -6,9 +6,18 @@ import views from '../Views/views';
 //init
 var mainPage = () => {
   window.webLine = webLine; //expose webLine
+  var addLocation = (loc) => {
+    addLocation[addLocation.loc % 3] = loc;
+    w.findId(`recent${(addLocation.loc % 3) + 1}`).textContent = loc;
+    addLocation.loc++;
+  };
+  addLocation.loc = 0;
+  addLocation.locs = [];
   mainPage.listeners = [];
   webLine.slash.add('js', (text) => {
     let response;
+    store.mainPage.jsStash = store.mainPage.jsStash || [];
+    store.mainPage.jsStash.push(text);
     try {
       response = eval.call(window, text);
     } catch (e) {
@@ -55,13 +64,25 @@ var mainPage = () => {
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      w.insert(parent, w.html(`<h3 id="inputLabel">Welcome.</h3>`));
+      let home = w.html(`<h3 id="inputLabel">Welcome.</h3>`);
+      w.insert(parent, home);
     }
   });
+
+  webLine.slash.add('clear', () => {
+    //clear space first
+    parent = w.findId('webLine');
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    //remove all contents of it
+  }, true);
+
   webLine.slash.add('location', () => webLine.out(webLine.loc), true);
 
   mainPage.listeners.push('formInput');
   webLine.register((location) => {
+    addLocation(location);
     //clear space first
     parent = w.findId('webLineWrapper');
     while (parent.firstChild) {

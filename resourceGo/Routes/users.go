@@ -87,7 +87,7 @@ func make(res http.ResponseWriter, req *http.Request) {
   */
   var username string
   err := db.Connection.QueryRow(`
-    SELECT username FROM users WHERE username=$1;
+    SELECT username FROM users WHERE username=?
   `, newUser.Username).Scan(&username)
 
   if err != nil {
@@ -98,7 +98,7 @@ func make(res http.ResponseWriter, req *http.Request) {
       hasher.Write([]byte(newUser.Password))
       newPassword := base64.StdEncoding.EncodeToString(hasher.Sum(nil))
       db.Connection.Exec(`
-        INSERT INTO users (username,password,firstname,lastname,activated) VALUES ($1,$2,$3,$4,$5);
+        INSERT INTO users (username,password,firstname,lastname,activated) VALUES (?,?,?,?,?)
       `, newUser.Username, newPassword, newUser.FirstName, newUser.LastName, false)
 
       /*
@@ -127,9 +127,6 @@ func make(res http.ResponseWriter, req *http.Request) {
       query.Set("token", token)
       tokenUrl.RawQuery = query.Encode()
 
-      //send Email
-      sendEmail(newUser.Username, tokenUrl.String(), newUser.FirstName)
-
       res.Header().Set("Content-Type", "application/json; charset=UTF-8")
       res.WriteHeader(http.StatusOK)
       signupSuccess := &newUserSuccess{
@@ -137,9 +134,13 @@ func make(res http.ResponseWriter, req *http.Request) {
         Message:"Successful Signup! Check your email for confirmation",
         FirstName: newUser.FirstName,
       }
+      //return JSON
       if err := json.NewEncoder(res).Encode(signupSuccess); err != nil {
         log.Fatal(err) //error encoding JSON, should fail
       }
+      //send Email
+      sendEmail(newUser.Username, tokenUrl.String(), newUser.FirstName, req)
+      return;
     } else {
       //handle PostgreSQL error -- internal server error
       http.Error(res, http.StatusText(500), 500)
@@ -180,7 +181,7 @@ func activate(res http.ResponseWriter, req *http.Request) {
     //success -- validate account & continue
     username := token.Claims["username"].(string)
     db.Connection.Exec(`
-      UPDATE users SET activated=true WHERE username=$1;
+      UPDATE users SET activated=true WHERE username=?
     `, username)
     //send file that will redirect them and keep the token
     http.ServeFile(res, req, "private/authorize.html")
@@ -210,7 +211,7 @@ func login(res http.ResponseWriter, req *http.Request) {
   var activated bool //check if user is activated
   //check if user exists, get user, decode user password, check for match
   err := db.Connection.QueryRow(`
-    SELECT password, activated FROM users WHERE username=$1;
+    SELECT password, activated FROM users WHERE username=?
   `, usr.Username).Scan(&pw, &activated) //scan password into pw
 
   // Handle Query Result
@@ -223,9 +224,10 @@ func login(res http.ResponseWriter, req *http.Request) {
       if err := json.NewEncoder(res).Encode(loginFail); err != nil {
         log.Fatal(err) //error encoding JSON, should fail
       }
+      return
     } else {
       //handle PostgreSQL error
-      http.Error(res, http.StatusText(500), 500)
+      log.Panic(err)
       return
     }
   }

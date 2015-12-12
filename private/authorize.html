@@ -8,7 +8,7 @@
     <!-- Purpose of this document is solely to retrieve token & redirect to '/' -->
     <script>
       localStorage.WriterKey = location.search.slice(7);
-      location = "http://localhost:8080";
+      location = `http://${location.host}`;
     </script>
   </body>
 </html>

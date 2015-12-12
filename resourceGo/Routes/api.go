@@ -57,7 +57,7 @@ func user(res http.ResponseWriter, req *http.Request) {
   if err == nil && token.Valid {
     var firstName string;
     er := db.Connection.QueryRow(`
-      SELECT firstname FROM users WHERE username=$1;
+      SELECT firstname FROM users WHERE username=?
     `, token.Claims["username"].(string)).Scan(&firstName)
 
     if er != nil {

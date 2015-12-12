@@ -4,13 +4,16 @@
 package routes
 
 import (
-    "log"
+    //"log"
     "bytes"
+    "net/http"
     "regexp"
     "unicode"
-    "net/smtp"
     "text/template"
-    "github.com/ahermida/Writer/resourceGo/Config"
+    "google.golang.org/appengine/log"
+    "google.golang.org/appengine"
+    "google.golang.org/appengine/mail"
+
 )
 
 // struct for POST handler to /users/make
@@ -76,22 +79,16 @@ func checkNames(first, last string) bool {
   return valid
 }
 
-func sendEmail(email, link, name string) {
-  ///Props to Nathan Leclaire for his post on Golang Emails
+func sendEmail(email, link, name string, r *http.Request) {
   var err error
   var doc bytes.Buffer
-
-  const emailTemplate = `From: {{.From}}
-Subject: {{.Subject}}
-To: {{.To}}
-
-
+  ///Props to Nathan Leclaire for his post on Golang Emails
+  const emailTemplate = `
 {{.Body}}
 {{.Link}}
 Sincerely,
 {{.From}}
   `
-
   context := &SmtpTemplateData{
        From: "Albert Hermida",
          To: email,
@@ -102,26 +99,27 @@ Sincerely,
   t := template.New("emailTemplate")
   t, err = t.Parse(emailTemplate)
   if err != nil {
-      log.Print("error trying to parse mail template")
+    //  log.Print("error trying to parse mail template")
   }
   err = t.Execute(&doc, context)
   if err != nil {
-      log.Print("error trying to execute mail template")
+    //  log.Print("error trying to execute mail template")
+  }
+  //Google App Engine Handling
+  ctx := appengine.NewContext(r)
+  msg := &mail.Message{
+          Sender:  "Albert Hermida <alberthermida@gmail.com>",
+          To:      []string{context.To},
+          Subject: context.Subject,
+          Body:    doc.String(),
+  }
+  if err := mail.Send(ctx, msg); err != nil {
+    log.Errorf(ctx, "Couldn't send email: %v", err)
+    //  log.Print("ERROR: attempting to send a mail ", err)
   }
 
-  auth := smtp.PlainAuth("",
-    config.Email.Username,
-    config.Email.Password,
-    config.Email.EmailServer,
-  )
-  err = smtp.SendMail("smtp.gmail.com:587",
-    auth,
-    config.Email.Username,
-    []string{email},
-    doc.Bytes())
-
   if err != nil {
-    log.Print("ERROR: attempting to send a mail ", err)
+    //log.Print("ERROR: attempting to send a mail ", err)
   }
 
 }
