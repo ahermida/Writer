@@ -49,7 +49,6 @@ func make(res http.ResponseWriter, req *http.Request) {
   decoder.Decode(&newUser) //populate struct newUser
 
   //check username field
-  log.Printf(newUser.Username)
   if !checkEmail(newUser.Username) {
     res.Header().Set("Content-Type", "application/json; charset=UTF-8")
     res.WriteHeader(http.StatusOK)
@@ -107,7 +106,7 @@ func make(res http.ResponseWriter, req *http.Request) {
 
       //create token
       tokenizer := jwt.New(jwt.SigningMethodHS256)
-      // Set some claims
+      // Set some claims -- Data that goes with JWT
       tokenizer.Claims["username"] = newUser.Username
       tokenizer.Claims["exp"] = time.Now().Add(time.Hour * 480).Unix()
       // Sign and get the complete encoded token as a string
@@ -127,6 +126,7 @@ func make(res http.ResponseWriter, req *http.Request) {
       query.Set("token", token)
       tokenUrl.RawQuery = query.Encode()
 
+      //Set Header for Success
       res.Header().Set("Content-Type", "application/json; charset=UTF-8")
       res.WriteHeader(http.StatusOK)
       signupSuccess := &newUserSuccess{
@@ -186,8 +186,6 @@ func activate(res http.ResponseWriter, req *http.Request) {
     //send file that will redirect them and keep the token
     http.ServeFile(res, req, "private/authorize.html")
   } else {
-    res2B, _ := json.Marshal(token)
-    fmt.Println(string(res2B))
     //return error & stop
     http.Error(res, http.StatusText(404), 404)
     return

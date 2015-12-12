@@ -7,10 +7,14 @@ import views from '../Views/views';
 var mainPage = () => {
   window.webLine = webLine; //expose webLine
   var addLocation = (loc) => {
-    addLocation[addLocation.loc % 3] = loc;
-    w.findId(`recent${(addLocation.loc % 3) + 1}`).textContent = loc;
-    addLocation.loc++;
+    if (addLocation.locs.indexOf(loc) == -1) {
+      addLocation[addLocation.loc % 3] = loc;
+      w.findId(`recent${(addLocation.loc % 3) + 1}`).textContent = loc;
+      addLocation.loc++;
+    }
   };
+  window.addLocation = addLocation;
+  // IF ONLY
   addLocation.loc = 0;
   addLocation.locs = [];
   mainPage.listeners = [];
@@ -33,20 +37,55 @@ var mainPage = () => {
     }
     webLine.out(response);
     w.mFindId('webLineWrapper').scrollTop = w.mFindId('webLineWrapper').scrollHeight;
-  });
+  }, true, false);
   webLine.slash.add('google', (text) => {
+    let label = w.mFindId('inputLabel');
+    if (label) {
+      label.textContent = text;
+    } else {
+      parent = w.findId('webLineWrapper');
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      let home = w.html(`<h3 id="inputLabel">Google</h3>`);
+      w.insert(parent, home);
+    }
     location.href = 'https://www.google.com/search?q=' + text.split(' ').join('+');
-  });
+  }, false, false);
   webLine.slash.add('facebook', (text) => {
+    let label = w.mFindId('inputLabel');
+    if (label) {
+      label.textContent = text;
+    } else {
+      parent = w.findId('webLineWrapper');
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      let home = w.html(`<h3 id="inputLabel">Facebook</h3>`);
+      w.insert(parent, home);
+    }
     location.href = 'https://www.facebook.com/search?q=' + text.split(' ').join('+');
-  });
+  }, false, false);
   webLine.slash.add('youtube', (text) => {
+    let label = w.mFindId('inputLabel');
+    if (label) {
+      label.textContent = text;
+    } else {
+      parent = w.findId('webLineWrapper');
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      w(()=>{
+        let home = w.html(`<h3 id="inputLabel">Youtube</h3>`);
+        w.insert(parent, home);
+      });
+    }
     location.href = 'https://www.youtube.com/results?search_query=' + text.split(' ').join('+');
-  });
+  }, false, false);
   webLine.slash.add('logout', (text) => {
     window.localStorage.WriterKey = "";
     location.href = `http://${location.host}`;
-  }, true);
+  }, false, true);
 
   w.addEvent('keyup', 'formInput', function(event) {
     if (event.keyCode === 13) {
@@ -67,7 +106,7 @@ var mainPage = () => {
       let home = w.html(`<h3 id="inputLabel">Welcome.</h3>`);
       w.insert(parent, home);
     }
-  });
+  }, false, false);
 
   webLine.slash.add('clear', () => {
     //clear space first
@@ -76,9 +115,9 @@ var mainPage = () => {
       parent.removeChild(parent.firstChild);
     }
     //remove all contents of it
-  }, true);
+  }, false, true);
 
-  webLine.slash.add('location', () => webLine.out(webLine.loc), true);
+  webLine.slash.add('location', () => webLine.out(webLine.loc), true, true);
 
   mainPage.listeners.push('formInput');
   webLine.register((location) => {

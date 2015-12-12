@@ -88,6 +88,10 @@ var frontPage = () => {
         store.frontPage.signup[store.frontPage.targetItem] = event.target.value;
         frontPageActions.nextInputItem();
         event.target.value = '';
+        w(()=>{
+          let note = w.findId('notification');
+          note.className = "fail";
+        });
       } else {
         //show error in white
         frontPageActions.inputError(tryForm.message);

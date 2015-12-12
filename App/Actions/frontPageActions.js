@@ -19,8 +19,8 @@ frontPageActions.nextInputItem = () => {
 
   // set note if note doesn't exist
   if (!note) {
-    note = w.html(`<div class="fail" id="notification"></div>`);
-    w.insert(w.findId('formInputWrapperInner'), note);
+    w.insert(w.findId('formInputWrapperInner'), w.html(`<div class="fail" id="notification"></div>`));
+    note = w.findId('notification');
   }
   switch (store.frontPage.targetItem) {
     case "username":
@@ -37,7 +37,7 @@ frontPageActions.nextInputItem = () => {
       form.type = "text";
       formGuide.textContent = "First Name:";
       note.className = "fail";
-      note.textContent = "Press Enter"
+      note.textContent = "Press Enter";
       break;
     case "firstName":
       store.frontPage.targetItem = "lastName";

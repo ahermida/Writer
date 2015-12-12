@@ -94,8 +94,9 @@ webLine.slash = {
   * @param {boolean} [instant] Whether the function should be called, but not moved to (location).
   * Any text supplied after '/command' will be fed into fn
   */
-  add: (command, fn, instant) => {
+  add: (command, fn, locationOut, instant) => {
     fn.instant = instant;
+    fn.locationOut = locationOut;
     //replace or create function for a particular command
     webLine.slash.commands[command] = fn;
   },
@@ -121,7 +122,9 @@ webLine.slash = {
         } else {
           webLine.onChange(command);
           webLine.loc = command;
-          webLine.out(`Location: ${command}`);
+          if (webLine.slash.commands[command].locationOut) {
+            webLine.out(`Location: ${command}`);
+          }
         }
       } else {
         webLine.out(`Sorry, ${command} is not a registered command`);

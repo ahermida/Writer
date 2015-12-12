@@ -40,8 +40,8 @@ frontPageActions.nextInputItem = function () {
 
   // set note if note doesn't exist
   if (!note) {
-    note = _w2.default.html('<div class="fail" id="notification"></div>');
-    _w2.default.insert(_w2.default.findId('formInputWrapperInner'), note);
+    _w2.default.insert(_w2.default.findId('formInputWrapperInner'), _w2.default.html('<div class="fail" id="notification"></div>'));
+    note = _w2.default.findId('notification');
   }
   switch (_store2.default.frontPage.targetItem) {
     case "username":
@@ -390,6 +390,10 @@ var frontPage = function frontPage() {
         _store2.default.frontPage.signup[_store2.default.frontPage.targetItem] = event.target.value;
         _frontPageActions2.default.nextInputItem();
         event.target.value = '';
+        (0, _w2.default)(function () {
+          var note = _w2.default.findId('notification');
+          note.className = "fail";
+        });
       } else {
         //show error in white
         _frontPageActions2.default.inputError(tryForm.message);
@@ -477,10 +481,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mainPage = function mainPage() {
   window.webLine = _webLine2.default; //expose webLine
   var addLocation = function addLocation(loc) {
-    addLocation[addLocation.loc % 3] = loc;
-    _w2.default.findId('recent' + (addLocation.loc % 3 + 1)).textContent = loc;
-    addLocation.loc++;
+    if (addLocation.locs.indexOf(loc) == -1) {
+      addLocation[addLocation.loc % 3] = loc;
+      _w2.default.findId('recent' + (addLocation.loc % 3 + 1)).textContent = loc;
+      addLocation.loc++;
+    }
   };
+  window.addLocation = addLocation;
+  // IF ONLY
   addLocation.loc = 0;
   addLocation.locs = [];
   mainPage.listeners = [];
@@ -503,20 +511,55 @@ var mainPage = function mainPage() {
     }
     _webLine2.default.out(response);
     _w2.default.mFindId('webLineWrapper').scrollTop = _w2.default.mFindId('webLineWrapper').scrollHeight;
-  });
+  }, true, false);
   _webLine2.default.slash.add('google', function (text) {
+    var label = _w2.default.mFindId('inputLabel');
+    if (label) {
+      label.textContent = text;
+    } else {
+      parent = _w2.default.findId('webLineWrapper');
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      var home = _w2.default.html('<h3 id="inputLabel">Google</h3>');
+      _w2.default.insert(parent, home);
+    }
     location.href = 'https://www.google.com/search?q=' + text.split(' ').join('+');
-  });
+  }, false, false);
   _webLine2.default.slash.add('facebook', function (text) {
+    var label = _w2.default.mFindId('inputLabel');
+    if (label) {
+      label.textContent = text;
+    } else {
+      parent = _w2.default.findId('webLineWrapper');
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      var home = _w2.default.html('<h3 id="inputLabel">Facebook</h3>');
+      _w2.default.insert(parent, home);
+    }
     location.href = 'https://www.facebook.com/search?q=' + text.split(' ').join('+');
-  });
+  }, false, false);
   _webLine2.default.slash.add('youtube', function (text) {
+    var label = _w2.default.mFindId('inputLabel');
+    if (label) {
+      label.textContent = text;
+    } else {
+      parent = _w2.default.findId('webLineWrapper');
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      (0, _w2.default)(function () {
+        var home = _w2.default.html('<h3 id="inputLabel">Youtube</h3>');
+        _w2.default.insert(parent, home);
+      });
+    }
     location.href = 'https://www.youtube.com/results?search_query=' + text.split(' ').join('+');
-  });
+  }, false, false);
   _webLine2.default.slash.add('logout', function (text) {
     window.localStorage.WriterKey = "";
     location.href = 'http://' + location.host;
-  }, true);
+  }, false, true);
 
   _w2.default.addEvent('keyup', 'formInput', function (event) {
     if (event.keyCode === 13) {
@@ -537,7 +580,7 @@ var mainPage = function mainPage() {
       var home = _w2.default.html('<h3 id="inputLabel">Welcome.</h3>');
       _w2.default.insert(parent, home);
     }
-  });
+  }, false, false);
 
   _webLine2.default.slash.add('clear', function () {
     //clear space first
@@ -546,11 +589,11 @@ var mainPage = function mainPage() {
       parent.removeChild(parent.firstChild);
     }
     //remove all contents of it
-  }, true);
+  }, false, true);
 
   _webLine2.default.slash.add('location', function () {
     return _webLine2.default.out(_webLine2.default.loc);
-  }, true);
+  }, true, true);
 
   mainPage.listeners.push('formInput');
   _webLine2.default.register(function (location) {
@@ -1242,8 +1285,9 @@ webLine.slash = {
    * @param {boolean} [instant] Whether the function should be called, but not moved to (location).
    * Any text supplied after '/command' will be fed into fn
    */
-  add: function add(command, fn, instant) {
+  add: function add(command, fn, locationOut, instant) {
     fn.instant = instant;
+    fn.locationOut = locationOut;
     //replace or create function for a particular command
     webLine.slash.commands[command] = fn;
   },
@@ -1269,7 +1313,9 @@ webLine.slash = {
         } else {
           webLine.onChange(command);
           webLine.loc = command;
-          webLine.out('Location: ' + command);
+          if (webLine.slash.commands[command].locationOut) {
+            webLine.out('Location: ' + command);
+          }
         }
       } else {
         webLine.out('Sorry, ' + command + ' is not a registered command');

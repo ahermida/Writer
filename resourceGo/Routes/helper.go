@@ -103,7 +103,7 @@ Sincerely,
   }
   err = t.Execute(&doc, context)
   if err != nil {
-    //  log.Print("error trying to execute mail template")
+    // log.Print("error trying to execute mail template")
   }
   //Google App Engine Handling
   ctx := appengine.NewContext(r)
@@ -118,9 +118,6 @@ Sincerely,
     //  log.Print("ERROR: attempting to send a mail ", err)
   }
 
-  if err != nil {
-    //log.Print("ERROR: attempting to send a mail ", err)
-  }
 
 }
 
