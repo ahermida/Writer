@@ -455,6 +455,8 @@ exports.default = frontPage;
 },{"../Actions/frontPageActions":1,"../Stores/store":4,"../Views/views":5,"../w":7}],3:[function(require,module,exports){
 'use strict';
 
+var _templateObject = _taggedTemplateLiteral(['\n        $', '\n      '], ['\n        $', '\n      ']);
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -476,6 +478,8 @@ var _views = require('../Views/views');
 var _views2 = _interopRequireDefault(_views);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 //init
 var mainPage = function mainPage() {
@@ -579,12 +583,29 @@ var mainPage = function mainPage() {
     if (event.keyCode === 13) {
       _webLine2.default.in(event.target.value);
       event.target.value = '';
+      return; //also close dropdown
+    }
+    if (event.target.value && event.target.value[0] === '/') {
+      //create dropdown
+      var dropdown = _w2.default.findId('dropdown');
+      if (dropdown) {
+        //remove dropdow
+        while (dropdown.firstChild) {
+          dropdown.removeChild(dropdown.firstChild);
+        }
+      }
+      //render dropdown
+      var list = Object.keys(_webLine2.default.slash.commands).filter(function (command) {
+        command.search(event.target.value.substr(1));
+      });
+      _w2.default.insert(dropdown, _w2.default.html(_w2.default.tmp(_templateObject, list.map(function (listItem) {
+        return _w2.default.html('<div class="dropdownItem">' + listItem + '</div>');
+      }))));
     }
   });
   //let navbar clicks go into webLine.in
   _w2.default.addEvent('click', 'recents', function (event) {
     //puts / before so it will run as a command
-    var i = 10;
     _webLine2.default.in('/' + event.target.textContent);
   });
   /** Initialize Base Commands */
@@ -719,7 +740,7 @@ views.signup = '\n  <div id="frontPageCenter">\n    <div id="formInputWrapper">\
 
 //view presented in mainPage
 //WHY DOES APPENGINE NOT UPLOAD CHANGES?!
-views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://' + location.host + '" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recents" id="recent3"></span>\n        <span class="recents" id="recent2"></span>\n        <span class="recents" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
+views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://' + location.host + '" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recents" id="recent3"></span>\n        <span class="recents" id="recent2"></span>\n        <span class="recents" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n        <div id="dropdown"></div>\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
 exports.default = views;
 
 },{"../w":7}],6:[function(require,module,exports){

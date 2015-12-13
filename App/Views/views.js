@@ -76,6 +76,7 @@ views.main=`<div id="mainPage">
       </div>
       <div id="formInputWrapperInner">
         <input id="formInput" class="mainInput" placeholder="/js">
+        <div id="dropdown"></div>
       </div>
       </div>
     </div>

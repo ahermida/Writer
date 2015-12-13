@@ -105,7 +105,26 @@ var mainPage = () => {
     if (event.keyCode === 13) {
       webLine.in(event.target.value);
       event.target.value = '';
+      return; //also close dropdown
     }
+    if (event.target.value && event.target.value[0] === '/') {
+      //create dropdown
+      let dropdown = w.findId('dropdown');
+      if (dropdown) {
+        //remove dropdow
+        while (dropdown.firstChild) {
+          dropdown.removeChild(dropdown.firstChild);
+        }
+      }
+      //render dropdown
+      let list = Object.keys(webLine.slash.commands).filter((command)=>{
+        command.search(event.target.value.substr(1));
+      });
+      w.insert(dropdown, w.html(w.tmp`
+        $${ list.map((listItem)=>w.html(`<div class="dropdownItem">${listItem}</div>`))}
+      `));
+    }
+
   });
   //let navbar clicks go into webLine.in
   w.addEvent('click', 'recents', function(event) {
