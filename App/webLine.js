@@ -125,9 +125,22 @@ webLine.slash = {
           if (webLine.slash.commands[command].locationOut) {
             webLine.out(`Location: ${command}`);
           }
+          if (webLine.slash.commands[command].hasOwnProperty('init')) {
+            webLine.slash.commands[command].init();
+          }
         }
       } else {
-        webLine.out(`Sorry, ${command} is not a registered command`);
+        //output to box or consoles
+        if (webLine.hasOwnProperty('inputOut')) {
+          //send output to input box placeholder
+          webLine.inputOut(`Sorry, ${command} is not a registered command`);
+          setTimeout(()=>{
+            webLine.inputOut('/js');
+          }, 3500);
+        } else {
+          //send output to console
+          webLine.out(`Sorry, ${command} is not a registered command`);
+        }
       }
     }
   }

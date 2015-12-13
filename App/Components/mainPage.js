@@ -7,16 +7,19 @@ import views from '../Views/views';
 var mainPage = () => {
   window.webLine = webLine; //expose webLine
   var addLocation = (loc) => {
+    addLocation.loc = addLocation.loc || 0;
+    addLocation.locs = addLocation.locs || [];
     if (addLocation.locs.indexOf(loc) == -1) {
-      addLocation[addLocation.loc % 3] = loc;
+      addLocation.locs[addLocation.loc % 3] = loc;
       w.findId(`recent${(addLocation.loc % 3) + 1}`).textContent = loc;
       addLocation.loc++;
     }
   };
+  webLine.inputOut = function(text) {
+    w.mFindId('formInput').placeholder = text;
+  };
+
   window.addLocation = addLocation;
-  // IF ONLY
-  addLocation.loc = 0;
-  addLocation.locs = [];
   mainPage.listeners = [];
   webLine.slash.add('js', (text) => {
     let response;
@@ -52,6 +55,11 @@ var mainPage = () => {
     }
     location.href = 'https://www.google.com/search?q=' + text.split(' ').join('+');
   }, false, false);
+  webLine.slash.commands.google.init = () => {
+    parent = w.findId('webLineWrapper');
+    let home = w.html(`<h3 id="inputLabel">Google</h3>`);
+    w.insert(parent, home);
+  }
   webLine.slash.add('facebook', (text) => {
     let label = w.mFindId('inputLabel');
     if (label) {
@@ -61,11 +69,14 @@ var mainPage = () => {
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      let home = w.html(`<h3 id="inputLabel">Facebook</h3>`);
-      w.insert(parent, home);
     }
     location.href = 'https://www.facebook.com/search?q=' + text.split(' ').join('+');
   }, false, false);
+  webLine.slash.commands.facebook.init = () => {
+    parent = w.findId('webLineWrapper');
+    let home = w.html(`<h3 id="inputLabel">Facebook</h3>`);
+    w.insert(parent, home);
+  }
   webLine.slash.add('youtube', (text) => {
     let label = w.mFindId('inputLabel');
     if (label) {
@@ -75,13 +86,16 @@ var mainPage = () => {
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      w(()=>{
-        let home = w.html(`<h3 id="inputLabel">Youtube</h3>`);
-        w.insert(parent, home);
-      });
+      let home = w.html(`<h3 id="inputLabel">Youtube</h3>`);
+      w.insert(parent, home);
     }
     location.href = 'https://www.youtube.com/results?search_query=' + text.split(' ').join('+');
   }, false, false);
+  webLine.slash.commands.youtube.init = () => {
+    parent = w.findId('webLineWrapper');
+    let home = w.html(`<h3 id="inputLabel">Youtube</h3>`);
+    w.insert(parent, home);
+  }
   webLine.slash.add('logout', (text) => {
     window.localStorage.WriterKey = "";
     location.href = `http://${location.host}`;
@@ -92,6 +106,11 @@ var mainPage = () => {
       webLine.in(event.target.value);
       event.target.value = '';
     }
+  });
+  //let navbar clicks go into webLine.in
+  w.addEvent('click', 'recents', function(event) {
+    //puts / before so it will run as a command
+    webLine.in(`/${event.target.textContent}`);
   });
   /** Initialize Base Commands */
   webLine.slash.add('home', text => {
@@ -108,6 +127,12 @@ var mainPage = () => {
     }
   }, false, false);
 
+  webLine.slash.commands.home.init = () => {
+    parent = w.findId('webLineWrapper');
+    let home = w.html(`<h3 id="inputLabel">Home</h3>`);
+    w.insert(parent, home);
+  }
+  //clear page
   webLine.slash.add('clear', () => {
     //clear space first
     parent = w.findId('webLine');

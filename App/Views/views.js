@@ -56,14 +56,16 @@ views.signup = `
   </div>
 `;
 
+//view presented in mainPage
+//WHY DOES APPENGINE NOT UPLOAD CHANGES?!
 views.main=`<div id="mainPage">
   <div id="mainPageContent">
     <div id="navbarMain">
       <a href="http://${location.host}" id="frontPageLogoMain">W</a>
       <span id="navbarMain-right">
-        <span class="recent" id="recent3"></span>
-        <span class="recent" id="recent2"></span>
-        <span class="recent" id="recent1"></span>
+        <span class="recents" id="recent3"></span>
+        <span class="recents" id="recent2"></span>
+        <span class="recents" id="recent1"></span>
         <span id="firstName"></span>
       </span>
     </div>

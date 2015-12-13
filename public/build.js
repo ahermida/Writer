@@ -481,16 +481,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mainPage = function mainPage() {
   window.webLine = _webLine2.default; //expose webLine
   var addLocation = function addLocation(loc) {
+    addLocation.loc = addLocation.loc || 0;
+    addLocation.locs = addLocation.locs || [];
     if (addLocation.locs.indexOf(loc) == -1) {
-      addLocation[addLocation.loc % 3] = loc;
+      addLocation.locs[addLocation.loc % 3] = loc;
       _w2.default.findId('recent' + (addLocation.loc % 3 + 1)).textContent = loc;
       addLocation.loc++;
     }
   };
+  _webLine2.default.inputOut = function (text) {
+    _w2.default.mFindId('formInput').placeholder = text;
+  };
+
   window.addLocation = addLocation;
-  // IF ONLY
-  addLocation.loc = 0;
-  addLocation.locs = [];
   mainPage.listeners = [];
   _webLine2.default.slash.add('js', function (text) {
     var response = undefined;
@@ -526,6 +529,11 @@ var mainPage = function mainPage() {
     }
     location.href = 'https://www.google.com/search?q=' + text.split(' ').join('+');
   }, false, false);
+  _webLine2.default.slash.commands.google.init = function () {
+    parent = _w2.default.findId('webLineWrapper');
+    var home = _w2.default.html('<h3 id="inputLabel">Google</h3>');
+    _w2.default.insert(parent, home);
+  };
   _webLine2.default.slash.add('facebook', function (text) {
     var label = _w2.default.mFindId('inputLabel');
     if (label) {
@@ -535,11 +543,14 @@ var mainPage = function mainPage() {
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      var home = _w2.default.html('<h3 id="inputLabel">Facebook</h3>');
-      _w2.default.insert(parent, home);
     }
     location.href = 'https://www.facebook.com/search?q=' + text.split(' ').join('+');
   }, false, false);
+  _webLine2.default.slash.commands.facebook.init = function () {
+    parent = _w2.default.findId('webLineWrapper');
+    var home = _w2.default.html('<h3 id="inputLabel">Facebook</h3>');
+    _w2.default.insert(parent, home);
+  };
   _webLine2.default.slash.add('youtube', function (text) {
     var label = _w2.default.mFindId('inputLabel');
     if (label) {
@@ -549,13 +560,16 @@ var mainPage = function mainPage() {
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
-      (0, _w2.default)(function () {
-        var home = _w2.default.html('<h3 id="inputLabel">Youtube</h3>');
-        _w2.default.insert(parent, home);
-      });
+      var home = _w2.default.html('<h3 id="inputLabel">Youtube</h3>');
+      _w2.default.insert(parent, home);
     }
     location.href = 'https://www.youtube.com/results?search_query=' + text.split(' ').join('+');
   }, false, false);
+  _webLine2.default.slash.commands.youtube.init = function () {
+    parent = _w2.default.findId('webLineWrapper');
+    var home = _w2.default.html('<h3 id="inputLabel">Youtube</h3>');
+    _w2.default.insert(parent, home);
+  };
   _webLine2.default.slash.add('logout', function (text) {
     window.localStorage.WriterKey = "";
     location.href = 'http://' + location.host;
@@ -566,6 +580,12 @@ var mainPage = function mainPage() {
       _webLine2.default.in(event.target.value);
       event.target.value = '';
     }
+  });
+  //let navbar clicks go into webLine.in
+  _w2.default.addEvent('click', 'recents', function (event) {
+    //puts / before so it will run as a command
+    var i = 10;
+    _webLine2.default.in('/' + event.target.textContent);
   });
   /** Initialize Base Commands */
   _webLine2.default.slash.add('home', function (text) {
@@ -582,6 +602,12 @@ var mainPage = function mainPage() {
     }
   }, false, false);
 
+  _webLine2.default.slash.commands.home.init = function () {
+    parent = _w2.default.findId('webLineWrapper');
+    var home = _w2.default.html('<h3 id="inputLabel">Home</h3>');
+    _w2.default.insert(parent, home);
+  };
+  //clear page
   _webLine2.default.slash.add('clear', function () {
     //clear space first
     parent = _w2.default.findId('webLine');
@@ -691,7 +717,9 @@ views.login = '\n<div id="frontPageCenter">\n  <div id="formInputWrapper">\n    
 //signup view
 views.signup = '\n  <div id="frontPageCenter">\n    <div id="formInputWrapper">\n      <h3 id="inputLabel">Sign up, it\'s free.</h3>\n      <div id="formInputWrapperInner">\n        <p id="formGuide">Villanova Email:</p>\n        <input id="formInput" placeholder="writer@villanova.edu">\n      </div>\n    </div>\n  </div>\n';
 
-views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://' + location.host + '" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recent" id="recent3"></span>\n        <span class="recent" id="recent2"></span>\n        <span class="recent" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
+//view presented in mainPage
+//WHY DOES APPENGINE NOT UPLOAD CHANGES?!
+views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://' + location.host + '" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recents" id="recent3"></span>\n        <span class="recents" id="recent2"></span>\n        <span class="recents" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
 exports.default = views;
 
 },{"../w":7}],6:[function(require,module,exports){
@@ -1316,9 +1344,22 @@ webLine.slash = {
           if (webLine.slash.commands[command].locationOut) {
             webLine.out('Location: ' + command);
           }
+          if (webLine.slash.commands[command].hasOwnProperty('init')) {
+            webLine.slash.commands[command].init();
+          }
         }
       } else {
-        webLine.out('Sorry, ' + command + ' is not a registered command');
+        //output to box or consoles
+        if (webLine.hasOwnProperty('inputOut')) {
+          //send output to input box placeholder
+          webLine.inputOut('Sorry, ' + command + ' is not a registered command');
+          setTimeout(function () {
+            webLine.inputOut('/js');
+          }, 3500);
+        } else {
+          //send output to console
+          webLine.out('Sorry, ' + command + ' is not a registered command');
+        }
       }
     }
   }
