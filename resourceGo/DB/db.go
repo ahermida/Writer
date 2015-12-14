@@ -30,12 +30,12 @@ func init() {
 //Creates Tables in the public DB for now -- 12/6/2015
 func createModel() {
 
-  /*                   DB RESET
+  /*              DB RESET
   _, er1 := Connection.Exec(`drop table if exists users;`)
   if er1 != nil {
     log.Println(er1)
-  }
-  */
+  }*/
+
   _, err := Connection.Exec(`
     create table IF NOT EXISTS users
     (

@@ -455,7 +455,7 @@ exports.default = frontPage;
 },{"../Actions/frontPageActions":1,"../Stores/store":4,"../Views/views":5,"../w":7}],3:[function(require,module,exports){
 'use strict';
 
-var _templateObject = _taggedTemplateLiteral(['\n        $', '\n      '], ['\n        $', '\n      ']);
+var _templateObject = _taggedTemplateLiteral(['\n      $', '\n      '], ['\n      $', '\n      ']);
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -579,35 +579,6 @@ var mainPage = function mainPage() {
     location.href = 'http://' + location.host;
   }, false, true);
 
-  _w2.default.addEvent('keyup', 'formInput', function (event) {
-    if (event.keyCode === 13) {
-      _webLine2.default.in(event.target.value);
-      event.target.value = '';
-      return; //also close dropdown
-    }
-    if (event.target.value && event.target.value[0] === '/') {
-      //create dropdown
-      var dropdown = _w2.default.findId('dropdown');
-      if (dropdown) {
-        //remove dropdow
-        while (dropdown.firstChild) {
-          dropdown.removeChild(dropdown.firstChild);
-        }
-      }
-      //render dropdown
-      var list = Object.keys(_webLine2.default.slash.commands).filter(function (command) {
-        command.search(event.target.value.substr(1));
-      });
-      _w2.default.insert(dropdown, _w2.default.html(_w2.default.tmp(_templateObject, list.map(function (listItem) {
-        return _w2.default.html('<div class="dropdownItem">' + listItem + '</div>');
-      }))));
-    }
-  });
-  //let navbar clicks go into webLine.in
-  _w2.default.addEvent('click', 'recents', function (event) {
-    //puts / before so it will run as a command
-    _webLine2.default.in('/' + event.target.textContent);
-  });
   /** Initialize Base Commands */
   _webLine2.default.slash.add('home', function (text) {
     var label = _w2.default.mFindId('inputLabel');
@@ -651,6 +622,84 @@ var mainPage = function mainPage() {
       parent.removeChild(parent.firstChild);
     }
     _webLine2.default.mount(_w2.default.findId('webLineWrapper')); // replace note
+  });
+
+  /**
+   *  Events -- Keyboard & Clicks
+   */
+
+  _w2.default.addEvent('keyup', 'formInput', function (event) {
+    if (event.keyCode === 13) {
+      _webLine2.default.in(event.target.value);
+      event.target.value = '';
+      var dropdown = _w2.default.findId('dropdown');
+      if (dropdown) {
+        //remove dropdow
+        while (dropdown.firstChild) {
+          dropdown.removeChild(dropdown.firstChild);
+        }
+      }
+      dropdown.className = "hidden";
+      return; //also close dropdown
+    }
+    if (event.target.value && event.target.value[0] === '/') {
+      //create dropdown
+      var dropdown = _w2.default.findId('dropdown');
+      if (dropdown) {
+        //remove dropdow
+        while (dropdown.firstChild) {
+          dropdown.removeChild(dropdown.firstChild);
+        }
+      }
+      //render dropdown
+      dropdown.className = "";
+      var list = Object.keys(_webLine2.default.slash.commands).filter(function (command) {
+        return command.indexOf(event.target.value.substr(1)) !== -1;
+      });
+      //log list for testing
+      list = list.slice(0, 4);
+      if (!list.length) {
+        dropdown.className = "hidden";
+      }
+      var dropdownHtml = _w2.default.tmp(_templateObject, list.map(function (listItem) {
+        return '<div id="' + listItem + '" class="dropdownItem">\n                                  <span class="dropdownText">' + listItem + '</span>\n                               </div>';
+      }));
+      //gotta take a look at my insert function, seems to be giving me problems
+      var range = document.createRange();
+      // make the parent of the first div in the document becomes the context node
+      range.selectNode(dropdown);
+      //why doesn't google's app engine ever update static files?
+      var documentFragment = range.createContextualFragment(dropdownHtml);
+      dropdown.appendChild(documentFragment.cloneNode(true));
+    }
+    if (!event.target.value) {
+      var dropdown = _w2.default.findId('dropdown');
+      dropdown.className = "hidden";
+    }
+  });
+
+  //let navbar clicks go into webLine.in
+  _w2.default.addEvent('click', 'recents', function (event) {
+    //puts / before so it will run as a command
+    _webLine2.default.in('/' + event.target.textContent);
+    var input = _w2.default.mFindId('formInput').value = '';
+    var dropdown = _w2.default.mFindId('dropdown');
+    dropdown.className = "hidden";
+  });
+
+  _w2.default.addEvent('click', 'dropdownItem', function (event) {
+    //find id
+    var dropdown = _w2.default.mFindId('dropdown');
+    dropdown.className = "hidden";
+    _webLine2.default.in('/' + event.target.id);
+    _w2.default.mFindId('formInput').value = '';
+  });
+  _w2.default.addEvent('click', 'dropdownText', function (event) {
+    //workaround to handle clicks on text
+    var dropdown = _w2.default.mFindId('dropdown');
+    dropdown.className = "hidden";
+    _webLine2.default.in('/' + event.target.parentNode.id);
+    _w2.default.mFindId('formInput').value = '';
   });
 };
 mainPage.remove = function () {
@@ -740,7 +789,7 @@ views.signup = '\n  <div id="frontPageCenter">\n    <div id="formInputWrapper">\
 
 //view presented in mainPage
 //WHY DOES APPENGINE NOT UPLOAD CHANGES?!
-views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://' + location.host + '" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recents" id="recent3"></span>\n        <span class="recents" id="recent2"></span>\n        <span class="recents" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n        <div id="dropdown"></div>\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
+views.main = '<div id="mainPage">\n  <div id="mainPageContent">\n    <div id="navbarMain">\n      <a href="http://' + location.host + '" id="frontPageLogoMain">W</a>\n      <span id="navbarMain-right">\n        <span class="recents" id="recent3"></span>\n        <span class="recents" id="recent2"></span>\n        <span class="recents" id="recent1"></span>\n        <span id="firstName"></span>\n      </span>\n    </div>\n    <div id="mainPageCenter">\n      <div id="formInputWrapper">\n      <div id="webLineWrapper">\n        <h3 id="inputLabel">Welcome.</h3>\n      </div>\n      <div id="formInputWrapperInner">\n        <input id="formInput" class="mainInput" placeholder="/js">\n        <div id="dropdown" class="hidden"></div>\n      </div>\n      </div>\n    </div>\n  </div>\n </div>\n';
 exports.default = views;
 
 },{"../w":7}],6:[function(require,module,exports){

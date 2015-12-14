@@ -101,36 +101,6 @@ var mainPage = () => {
     location.href = `http://${location.host}`;
   }, false, true);
 
-  w.addEvent('keyup', 'formInput', function(event) {
-    if (event.keyCode === 13) {
-      webLine.in(event.target.value);
-      event.target.value = '';
-      return; //also close dropdown
-    }
-    if (event.target.value && event.target.value[0] === '/') {
-      //create dropdown
-      let dropdown = w.findId('dropdown');
-      if (dropdown) {
-        //remove dropdow
-        while (dropdown.firstChild) {
-          dropdown.removeChild(dropdown.firstChild);
-        }
-      }
-      //render dropdown
-      let list = Object.keys(webLine.slash.commands).filter((command)=>{
-        command.search(event.target.value.substr(1));
-      });
-      w.insert(dropdown, w.html(w.tmp`
-        $${ list.map((listItem)=>w.html(`<div class="dropdownItem">${listItem}</div>`))}
-      `));
-    }
-
-  });
-  //let navbar clicks go into webLine.in
-  w.addEvent('click', 'recents', function(event) {
-    //puts / before so it will run as a command
-    webLine.in(`/${event.target.textContent}`);
-  });
   /** Initialize Base Commands */
   webLine.slash.add('home', text => {
     let label = w.mFindId('inputLabel');
@@ -173,6 +143,88 @@ var mainPage = () => {
     }
     webLine.mount(w.findId('webLineWrapper')); // replace note
   });
+
+  /**
+   *  Events -- Keyboard & Clicks
+   */
+
+  w.addEvent('keyup', 'formInput', function(event) {
+    if (event.keyCode === 13) {
+      webLine.in(event.target.value);
+      event.target.value = '';
+      let dropdown = w.findId('dropdown');
+      if (dropdown) {
+        //remove dropdow
+        while (dropdown.firstChild) {
+          dropdown.removeChild(dropdown.firstChild);
+        }
+      }
+      dropdown.className = "hidden";
+      return; //also close dropdown
+    }
+    if (event.target.value && event.target.value[0] === '/') {
+      //create dropdown
+      let dropdown = w.findId('dropdown');
+      if (dropdown) {
+        //remove dropdow
+        while (dropdown.firstChild) {
+          dropdown.removeChild(dropdown.firstChild);
+        }
+      }
+      //render dropdown
+      dropdown.className = "";
+      let list = Object.keys(webLine.slash.commands).filter((command)=>{
+       return command.indexOf(event.target.value.substr(1)) !== -1;
+      });
+      //log list for testing
+      list = list.slice(0,4);
+      if (!list.length) {
+        dropdown.className = "hidden";
+      }
+      let dropdownHtml = w.tmp`
+      $${list.map((listItem)=>`<div id="${listItem}" class="dropdownItem">
+                                  <span class="dropdownText">${listItem}</span>
+                               </div>`)}
+      `;
+      //gotta take a look at my insert function, seems to be giving me problems
+      let range = document.createRange();
+      // make the parent of the first div in the document becomes the context node
+      range.selectNode(dropdown);
+      //why doesn't google's app engine ever update static files?
+      var documentFragment = range.createContextualFragment(dropdownHtml);
+      dropdown.appendChild(documentFragment.cloneNode(true));
+    }
+    if (!event.target.value) {
+      let dropdown = w.findId('dropdown');
+      dropdown.className = "hidden";
+    }
+  });
+
+
+  //let navbar clicks go into webLine.in
+  w.addEvent('click', 'recents', (event) => {
+    //puts / before so it will run as a command
+    webLine.in(`/${event.target.textContent}`);
+    let input = w.mFindId('formInput').value = '';
+    let dropdown = w.mFindId('dropdown');
+    dropdown.className = "hidden";
+  });
+
+  w.addEvent('click', 'dropdownItem', (event) => {
+    //find id
+    let dropdown = w.mFindId('dropdown');
+    dropdown.className = "hidden";
+    webLine.in(`/${event.target.id}`);
+    w.mFindId('formInput').value = '';
+  });
+  w.addEvent('click', 'dropdownText', (event) => {
+    //workaround to handle clicks on text
+    let dropdown = w.mFindId('dropdown');
+    dropdown.className = "hidden";
+    webLine.in(`/${event.target.parentNode.id}`);
+    w.mFindId('formInput').value = '';
+  });
+
 };
 mainPage.remove = () => {
   w.remove(w.findId('mainPage'));

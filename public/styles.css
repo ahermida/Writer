@@ -17,6 +17,33 @@ img {
   height: 100%;
   width: 100%;
 }
+/*
+  manages the input box dropdown suggestions
+*/
+#dropdown {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: column;
+  flex-flow: column;
+  max-height: 200px;
+  overflow: hidden;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  border-top: 0px;
+}
+.dropdownItem {
+  display: -webkit-flex;
+  display: flex;
+  height: 40px;
+}
+.dropdownItem:hover {
+  cursor: pointer;
+  background-color: #e0e0e0;
+}
+.dropdownText {
+  margin: auto 10px;
+  font-family: sans-serif;
+}
 #bgVideoWrapper {
   position: fixed;
   height: 100%;
@@ -234,15 +261,22 @@ img {
   text-decoration: none;
   font-size: 1em;
   height: 40px;
+  min-height: 40px;
   text-indent: 5px;
   border: none;
   max-width: 500px;
   min-width: 300px;
   width: 100%;
 }
+.hidden {
+  /* Hidden */
+  visibility: hidden;
+}
+
 
 .mainInput {
   border-radius: 5px;
+  -webkit-border-radius: 5px;
   border: 1px solid #ccc !important;
 }
 .mainInput:hover{
