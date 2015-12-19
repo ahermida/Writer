@@ -1,18 +1,27 @@
+/**
+ * Controller for fronPage.js -- manages events and mounting
+ */
 import w from '../w';
 import views from '../Views/views';
 import store from '../Stores/store';
 import frontPageActions from '../Actions/frontPageActions'
 
-//just to keep track of all the listeners in the field. (make clean-up easier)
 
+/**
+ * Function to mount listeners
+ */
 var frontPage = () => {
-  //active listeners for loginView
+
+  //active 'listeners' for loginView
   frontPage.listeners = [];
 
-  //add click event & keep track of about
+  /**
+   * Handle Click on 'About'
+   */
   w.addEvent('click', 'about', (event) => {
     store.frontPage.signup = {};
     store.frontPage.login = {};
+
     //on click of 'about, remove input, bring in about view
     let frontPageContent = w.findId('frontPageContent');
     let oldView = w.findId('frontPageCenter');
@@ -22,10 +31,13 @@ var frontPage = () => {
   });
   frontPage.listeners.push('about');
 
-  //add click event & keep track of team
+  /**
+   * Handle Click on 'Team'
+   */
   w.addEvent('click', 'team', (event) => {
     store.frontPage.signup = {};
     store.frontPage.login = {};
+
     //on click of 'about, remove input, bring in about view'
     let frontPageContent = w.findId('frontPageContent');
     let oldView = w.findId('frontPageCenter');
@@ -34,10 +46,13 @@ var frontPage = () => {
   });
   frontPage.listeners.push('team');
 
-  //add click event & keep track of login view
+  /**
+   * Handle Click on 'Login'
+   */
   w.addEvent('click', 'login', (event) => {
     store.frontPage.signup = {};
     store.frontPage.targetItem = "username";
+
     //on click of 'login' remove input, bring in about view
     let frontPageContent = w.findId('frontPageContent');
     let oldView = w.findId('frontPageCenter');
@@ -49,13 +64,16 @@ var frontPage = () => {
   });
   frontPage.listeners.push('login');
 
-  //on click of signup switch to signup
+  /**
+   * Handle Click on 'Signup'
+   */
   w.addEvent('click', 'signup', (event) => {
     store.frontPage = {};
     store.frontPage.login = {};
     store.frontPage.signup = {};
     store.frontPage.inputVal = "";
     store.frontPage.targetItem = "username";
+
     //on click of 'signup', remove input, bring in about view'
     let frontPageContent = w.findId('frontPageContent');
     let oldView = w.findId('frontPageCenter');
@@ -66,7 +84,9 @@ var frontPage = () => {
     login.id = "login";
   });
 
-  //for login, no form validation
+  /**
+   * Handle Keyup on Login Form
+   */
   w.addEvent('keyup', 'formInputLogin', (event) => {
     if (event.keyCode == 13) {
       store.frontPage.login[store.frontPage.targetItem] = event.target.value;
@@ -78,11 +98,17 @@ var frontPage = () => {
     store.frontPage.inputVal = event.target.value;
   });
 
+  /**
+   * Handle Keyup on Singup Form
+   */
   w.addEvent('keyup', 'formInput', (event) => {
+
     //check if valid item for target
     let tryForm = frontPageActions.parseItem(event.target.value.trim());
+
     //handle keypresses ENTER & BACKSPACE (when empty)
     if (event.keyCode === 13) {
+
       //fill out form & jump to next part
       if (tryForm.success) {
         store.frontPage.signup[store.frontPage.targetItem] = event.target.value;
@@ -93,12 +119,15 @@ var frontPage = () => {
           note.className = "fail";
         });
       } else {
+
         //show error in white
         frontPageActions.inputError(tryForm.message);
       }
     }
+
     //Handle BACKSPACE
     if (!store.frontPage.inputVal && event.keyCode === 8 ) {
+
       //jump to previous
       frontPageActions.previousInputItem();
     }
@@ -129,8 +158,11 @@ var frontPage = () => {
  */
 frontPage.initialize = () => {}
 
-//function to completely remove frontPage & its 'listeners'
+/**
+ * Handle View Removal
+ */
 frontPage.remove = () => {
+  
   //reset store, remove html, and remove events
   store.frontPage = {};
   store.frontPage.login = {};
@@ -146,6 +178,5 @@ frontPage.remove = () => {
   frontPage.listeners = [];
 };
 
-//export frontPage
 
 export default frontPage;

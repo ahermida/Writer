@@ -120,6 +120,9 @@ webLine.slash = {
         if (webLine.slash.commands[command].instant) {
           webLine.slash.commands[command]();
         } else {
+          if (webLine.slash.commands[webLine.loc].hasOwnProperty('remove')) {
+            webLine.slash.commands[webLine.loc].remove();
+          }
           webLine.onChange(command);
           webLine.loc = command;
           if (webLine.slash.commands[command].locationOut) {

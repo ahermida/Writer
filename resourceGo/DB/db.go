@@ -49,4 +49,24 @@ func createModel() {
   if err != nil {
     log.Fatal(err)
   }
+  _, err = Connection.Exec(`
+    create table IF NOT EXISTS notes
+    (
+          username   text       NOT NULL,
+          name       text       NOT NULL,
+          content    text       NOT NULL
+    );`)
+  if err != nil {
+    log.Fatal(err)
+  }
+  _, err = Connection.Exec(`
+    create table IF NOT EXISTS js
+    (
+          username   text       NOT NULL,
+          name       text       NOT NULL,
+          content    text       NOT NULL
+    );`)
+  if err != nil {
+    log.Fatal(err)
+  }
 }

@@ -10,7 +10,8 @@ var frontPageActions = {};
 //goes to the next item on the list
 
 /**
- *  Trace Signup Input
+ *  Trace Signup Input -- somewhat brute-forced
+ *  but the switch helps with edge cases
  */
 frontPageActions.nextInputItem = () => {
   let formGuide = w.findId('formGuide');
@@ -54,7 +55,9 @@ frontPageActions.nextInputItem = () => {
       break;
   }
 }
-//goes to the previous item on the list
+/**
+ *  Traces through the previous item on the list
+ */
 frontPageActions.previousInputItem = () => {
   let formGuide = w.findId('formGuide');
   let form      = w.findId('formInput');
@@ -127,9 +130,25 @@ frontPageActions.previousInputItemLogin = () => {
 
 
 /**
- * Form Validation -- I could (should) have compiled the regex, but I figure it's not that big a problem
+ * Form Validation -- I leave the regex outside of the functions so it doesn't need to re-compile
  */
 
+ let regexpEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@villanova.edu/;
+ function validateEmail(email) {
+   return regexpEmail.test(email);
+ }
+ let regexpPassword = /(?=.*\d)(?=.*[a-zA-Z]).{7,}/;
+ function validatePassword(input) {
+   return regexpPassword.test(input);
+ }
+ let regexpName = /(?=[a-zA-Z]).{2,}/;
+ function validateName(name) {
+   return regexpName.test(name);
+ }
+
+/**
+ *  Form Validation -- Parsing Input Items
+ */
 frontPageActions.parseItem = (input) => {
   let response = {};
   switch (store.frontPage.targetItem) {
@@ -153,6 +172,9 @@ frontPageActions.parseItem = (input) => {
   return response;
 }
 
+/**
+ *  Enter key is hit and fails validation
+ */
 frontPageActions.inputError = (message) => {
   //display message in notification
   let found = w.findId('notification');
@@ -165,22 +187,12 @@ frontPageActions.inputError = (message) => {
     `));
   }
 }
-function validateEmail(email) {
-  var regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@villanova.edu/;
-  return regexp.test(email);
-}
-function validatePassword(input) {
-  let regexp = /(?=.*\d)(?=.*[a-zA-Z]).{7,}/;
-  return regexp.test(input);
-}
-function validateName(name) {
-  let regexp = /(?=[a-zA-Z]).{2,}/;
-  return regexp.test(name);
-}
 
 /**
  * AJAX Stuff Here On
  */
+
+/** POST Login Info */
 frontPageActions.login = () => {
   w.post(`http://${location.host}/users/login`)
   .attach({
@@ -213,14 +225,13 @@ frontPageActions.login = () => {
         if (found) {
           found.textContent = res.body.message;
         } else {
-          console.log(res.body.success);
           w.insert(w.findId('formInputWrapperInner'), w.html(`<div class="success" id="notification">${res.body.message}</div>`));
         }
       }
     }
   });
 };
-
+/** POST Signup Info */
 frontPageActions.signup = () => {
   w.post(`http://${location.host}/users/make`)
   .attach({

@@ -3,10 +3,10 @@ import w from '../w';
 import store from '../Stores/store';
 import views from '../Views/views';
 
-//init
 var mainPage = () => {
-  window.webLine = webLine; //expose webLine
-  var addLocation = (loc) => {
+  mainPage.listeners = [];
+  window.webLine = webLine; //expose webLine for /js
+  let addLocation = (loc) => {
     addLocation.loc = addLocation.loc || 0;
     addLocation.locs = addLocation.locs || [];
     if (addLocation.locs.indexOf(loc) == -1) {
@@ -15,15 +15,16 @@ var mainPage = () => {
       addLocation.loc++;
     }
   };
-  webLine.inputOut = function(text) {
+  //allows for failure text to be placed in the textbox
+  webLine.inputOut = (text) => {
     w.mFindId('formInput').placeholder = text;
   };
 
-  window.addLocation = addLocation;
-  mainPage.listeners = [];
+  /**
+   *  The handler for /js
+   */
   webLine.slash.add('js', (text) => {
     let response;
-    store.mainPage.jsStash = store.mainPage.jsStash || [];
     store.mainPage.jsStash.push(text);
     try {
       response = eval.call(window, text);
@@ -40,13 +41,47 @@ var mainPage = () => {
     }
     webLine.out(response);
     w.mFindId('webLineWrapper').scrollTop = w.mFindId('webLineWrapper').scrollHeight;
-  }, true, false);
+  }, true, false); // show location: js, not instant
+
+  /**
+   *  The handler for /note
+   */
+  webLine.slash.add('note', (text) => {
+    let note = text.trim();
+    store.mainPage.noteStash.push(text);
+    //fill in
+    webLine.out(response);
+    w.mFindId('webLineWrapper').scrollTop = w.mFindId('webLineWrapper').scrollHeight;
+  }, false, false); //don't show location: note, not instant
+  webLine.slash.commands.note.init = () => {
+    //add textbox and listener, remove other textbox
+    let parent = w.findId('webLineWrapper');
+    let form = w.mFindId('formInputWrapperInner');
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+    parent.className = "note";
+    form.marginTop = "0px";
+    let note = w.html(`<div id="noteWrapper"></div>`);
+    w.insert(parent, note);
+  }
+  webLine.slash.commands.note.remove = () => {
+    //removal function for anything that won't be taken care of by a clear of the wrapper
+    let parent = w.findId('webLineWrapper');
+    let form = w.mFindId('formInputWrapperInner');
+    parent.className = "";
+    form.marginTop = "40px";
+  }
+
+  /**
+   *  The handler for /google
+   */
   webLine.slash.add('google', (text) => {
     let label = w.mFindId('inputLabel');
     if (label) {
       label.textContent = text;
     } else {
-      parent = w.findId('webLineWrapper');
+      let parent = w.findId('webLineWrapper');
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
@@ -54,35 +89,45 @@ var mainPage = () => {
       w.insert(parent, home);
     }
     location.href = 'https://www.google.com/search?q=' + text.split(' ').join('+');
-  }, false, false);
+  }, false, false); //don't show location: google because it has its own header, not instant
   webLine.slash.commands.google.init = () => {
-    parent = w.findId('webLineWrapper');
+    //initialize google command
+    let parent = w.findId('webLineWrapper');
     let home = w.html(`<h3 id="inputLabel">Google</h3>`);
     w.insert(parent, home);
   }
+
+  /**
+   *  The handler for /facebook
+   */
   webLine.slash.add('facebook', (text) => {
     let label = w.mFindId('inputLabel');
     if (label) {
       label.textContent = text;
     } else {
-      parent = w.findId('webLineWrapper');
+      let parent = w.findId('webLineWrapper');
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
     }
     location.href = 'https://www.facebook.com/search?q=' + text.split(' ').join('+');
-  }, false, false);
+  }, false, false); //don't show location: facebook because it has its own header, not instant
   webLine.slash.commands.facebook.init = () => {
-    parent = w.findId('webLineWrapper');
+    //initialize facebook command
+    let parent = w.findId('webLineWrapper');
     let home = w.html(`<h3 id="inputLabel">Facebook</h3>`);
     w.insert(parent, home);
   }
+
+  /**
+   *  The handler for /youtube
+   */
   webLine.slash.add('youtube', (text) => {
     let label = w.mFindId('inputLabel');
     if (label) {
       label.textContent = text;
     } else {
-      parent = w.findId('webLineWrapper');
+      let parent = w.findId('webLineWrapper');
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
@@ -90,54 +135,71 @@ var mainPage = () => {
       w.insert(parent, home);
     }
     location.href = 'https://www.youtube.com/results?search_query=' + text.split(' ').join('+');
-  }, false, false);
+  }, false, false); //don't show location: youtube because it has its own header, not instant
   webLine.slash.commands.youtube.init = () => {
-    parent = w.findId('webLineWrapper');
+    //initialize youtube command
+    let parent = w.findId('webLineWrapper');
     let home = w.html(`<h3 id="inputLabel">Youtube</h3>`);
     w.insert(parent, home);
   }
+
+  /**
+   *  Logout
+   */
   webLine.slash.add('logout', (text) => {
     window.localStorage.WriterKey = "";
     location.href = `http://${location.host}`;
-  }, false, true);
+  }, false, true); //instant, no need to show anything
 
-  /** Initialize Base Commands */
+  /**
+   *  The handler for /home
+   */
   webLine.slash.add('home', text => {
     let label = w.mFindId('inputLabel');
     if (label) {
       label.textContent = text;
     } else {
-      parent = w.findId('webLineWrapper');
+      let parent = w.findId('webLineWrapper');
       while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
       }
       let home = w.html(`<h3 id="inputLabel">Welcome.</h3>`);
       w.insert(parent, home);
     }
-  }, false, false);
-
+  }, false, false); //no need for location: home, it has its own header. Not instant
   webLine.slash.commands.home.init = () => {
-    parent = w.findId('webLineWrapper');
+    //initialize home command
+    let parent = w.findId('webLineWrapper');
     let home = w.html(`<h3 id="inputLabel">Home</h3>`);
     w.insert(parent, home);
   }
-  //clear page
+
+  /**
+   *  The handler for /clear
+   */
   webLine.slash.add('clear', () => {
     //clear space first
-    parent = w.findId('webLine');
+    let parent = w.findId('webLine');
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild);
     }
     //remove all contents of it
-  }, false, true);
+  }, false, true); //no need to show location, we're gonna clear the screen
 
+  /**
+   *  The handler for /location
+   */
   webLine.slash.add('location', () => webLine.out(webLine.loc), true, true);
+  /**                                                           ^show location, instant */
 
-  mainPage.listeners.push('formInput');
+
+  /**
+   *  Register middleware for each change in the application - clears the output box
+   */
   webLine.register((location) => {
     addLocation(location);
     //clear space first
-    parent = w.findId('webLineWrapper');
+    let parent = w.findId('webLineWrapper');
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild);
     }
@@ -145,10 +207,12 @@ var mainPage = () => {
   });
 
   /**
-   *  Events -- Keyboard & Clicks
+   *  Events -- Keyboard & Clicks --
    */
 
-  w.addEvent('keyup', 'formInput', function(event) {
+  /** Handle Main Box -- formInput --  text input */
+  w.addEvent('keyup', 'formInput', (event) => {
+    //handle main box
     if (event.keyCode === 13) {
       webLine.in(event.target.value);
       event.target.value = '';
@@ -199,9 +263,10 @@ var mainPage = () => {
       dropdown.className = "hidden";
     }
   });
+  mainPage.listeners.push('formInput')
 
 
-  //let navbar clicks go into webLine.in
+  /** Handle Recents -- located in the top right corner */
   w.addEvent('click', 'recents', (event) => {
     //puts / before so it will run as a command
     webLine.in(`/${event.target.textContent}`);
@@ -209,7 +274,10 @@ var mainPage = () => {
     let dropdown = w.mFindId('dropdown');
     dropdown.className = "hidden";
   });
+  mainPage.listeners.push('recents');
 
+
+  /** Handle Dropdown -- under the textbox */
   w.addEvent('click', 'dropdownItem', (event) => {
     //find id
     let dropdown = w.mFindId('dropdown');
@@ -217,6 +285,9 @@ var mainPage = () => {
     webLine.in(`/${event.target.id}`);
     w.mFindId('formInput').value = '';
   });
+  mainPage.listeners.push('dropdownItem');
+
+  /** Handle Drop down text -- duplicate event for uniformity */
   w.addEvent('click', 'dropdownText', (event) => {
     //workaround to handle clicks on text
     let dropdown = w.mFindId('dropdown');
@@ -224,21 +295,29 @@ var mainPage = () => {
     webLine.in(`/${event.target.parentNode.id}`);
     w.mFindId('formInput').value = '';
   });
-
+  mainPage.listeners.push('dropdownText');
 };
+
+/**
+ * Remove Element From Screen
+ */
 mainPage.remove = () => {
   w.remove(w.findId('mainPage'));
   mainPage.listeners.forEach((identifier) => {
     w.removeEvent(identifier);
   });
 };
+
+/**
+ * Initialize mainPage
+ */
 mainPage.initialize = () => {
   //check token
   w.post(`http://${location.host}/api/user`)
   .header('WriterKey', localStorage.getItem('WriterKey'))
   .header('Access-Control-Allow-Headers', '*')
   .header('Content-Type', "application/json")
-  .end(function(err, res){
+  .end((err, res) => {
     if (err) {
       console.log(err);
     } else {
@@ -251,10 +330,12 @@ mainPage.initialize = () => {
       } else {
         //display res.message in notification
         localStorage.removeItem("WriterKey");
+        //return to frontPage via reload for simplicity & uniformity
         location = `http://${location.host}`;
       }
     }
   });
+  //insert view into body, as well as webLine target setup
   w.insert(document.body, w.html(views.main));
   webLine.mount(w.findId('webLineWrapper'));
   mainPage();
