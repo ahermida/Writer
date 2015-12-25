@@ -22,7 +22,7 @@ var ApiMux = http.NewServeMux()
 func init() {
   ApiMux.HandleFunc("/api/test", test)
   ApiMux.HandleFunc("/api/user", user)
-  ApiMux.HandleFunc("/api/other", other)
+  ApiMux.HandleFunc("/api/note", note)
 }
 
 /*
@@ -88,13 +88,4 @@ func user(res http.ResponseWriter, req *http.Request) {
     return
   }
 
-}
-
-// Handle /api/other
-func other(res http.ResponseWriter, req *http.Request) {
-  if req.Method != "GET" {
-    http.Error(res, http.StatusText(405), 405)
-    return
-  }
-  http.ServeFile(res, req, "private/authorize.html")
 }

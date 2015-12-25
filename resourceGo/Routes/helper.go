@@ -4,14 +4,13 @@
 package routes
 
 import (
-    //"log"
     "bytes"
     "net/http"
     "regexp"
     "unicode"
     "text/template"
-    "google.golang.org/appengine/log"
     "google.golang.org/appengine"
+    "google.golang.org/appengine/log"
     "google.golang.org/appengine/mail"
 
 )

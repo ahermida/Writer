@@ -49,22 +49,16 @@ func createModel() {
   if err != nil {
     log.Fatal(err)
   }
+
   _, err = Connection.Exec(`
     create table IF NOT EXISTS notes
     (
+          uid        serial     NOT NULL,
           username   text       NOT NULL,
           name       text       NOT NULL,
-          content    text       NOT NULL
-    );`)
-  if err != nil {
-    log.Fatal(err)
-  }
-  _, err = Connection.Exec(`
-    create table IF NOT EXISTS js
-    (
-          username   text       NOT NULL,
-          name       text       NOT NULL,
-          content    text       NOT NULL
+          blobkey    text       NOT NULL,
+          created    date       NOT NULL,
+          deleted    boolean    NOT NULL
     );`)
   if err != nil {
     log.Fatal(err)

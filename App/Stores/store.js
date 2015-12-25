@@ -1,10 +1,10 @@
 /**
  * Data Storage for App
  */
- 
+
+ var store                 = {};
+
 //front
-import w from '../w'
-var store                  = {};
 store.frontPage            = {};
 store.frontPage.login      = {};
 store.frontPage.signup     = {};
@@ -16,4 +16,5 @@ store.mainPage             = {};
 store.mainPage.user        = '';
 store.mainPage.jsStash     = [];
 store.mainPage.noteStash   = [];
+
 export default store;
