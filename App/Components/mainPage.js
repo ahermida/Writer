@@ -44,36 +44,6 @@ var mainPage = () => {
   }, true, false); // show location: js, not instant
 
   /**
-   *  The handler for /note
-   */
-  webLine.slash.add('note', (text) => {
-    let note = text.trim();
-    store.mainPage.noteStash.push(text);
-    //fill in
-    webLine.out(response);
-    w.mFindId('webLineWrapper').scrollTop = w.mFindId('webLineWrapper').scrollHeight;
-  }, false, false); //don't show location: note, not instant
-  webLine.slash.commands.note.init = () => {
-    //add textbox and listener, remove other textbox
-    let parent = w.findId('webLineWrapper');
-    let form = w.mFindId('formInputWrapperInner');
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
-    }
-    parent.className = "note";
-    form.marginTop = "0px";
-    let note = w.html(`<div id="noteWrapper"></div>`);
-    w.insert(parent, note);
-  }
-  webLine.slash.commands.note.remove = () => {
-    //removal function for anything that won't be taken care of by a clear of the wrapper
-    let parent = w.findId('webLineWrapper');
-    let form = w.mFindId('formInputWrapperInner');
-    parent.className = "";
-    form.marginTop = "40px";
-  }
-
-  /**
    *  The handler for /google
    */
   webLine.slash.add('google', (text) => {
